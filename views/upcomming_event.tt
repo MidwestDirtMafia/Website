@@ -1,0 +1,56 @@
+<% IF session.user.admin == 1 %>
+    <div class="dropdown" id="eventActions">
+        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+            Event Admin
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a href="/events/upcomming/<% event.uuid %>/edit">Edit</a></li>
+            <% IF event.published == 0 %>
+                <li><a href="/events/upcomming/<% event.uuid %>/publish">Publish</a></li>
+            <% ELSE %>
+                <li><a href="/events/upcomming/<% event.uuid %>/unpublish">Unpublish</a></li>
+            <% END %>
+            <% IF event.reg_open == 0 %>
+                <li><a href="/events/upcomming/<% event.uuid %>/registration/open">Open Registration</a></li>
+            <% ELSE %>
+                <li><a href="/events/upcomming/<% event.uuid %>/registration/close">Close Registration</a></li>
+            <% END %>
+            <% IF event.private_registration == 0 %>
+                <li><a href="/events/upcomming/<% event.uuid %>/registration/private">Make Registration Private</a></li>
+            <% ELSE %>
+                <li><a href="/events/upcomming/<% event.uuid %>/registration/public">Make Registration Public</a></li>
+            <% END %>
+            <li><a href="/events/upcomming/<% event.uuid %>/delete">Delete</a></li>
+
+        </ul>
+    </div>
+<% END %>
+<h1><% event.title %></h1>
+<h5><% event.byline %></h5>
+<div style="text-align: center">
+    <img src="/image/<% event.banner_image %>"/>
+</div>
+&nbsp;<br/>
+&nbsp;<br/>
+<% IF session.user.admin == 1 %>
+    <h4>Event Status</h4>
+    <p>
+        <b>Published:</b> <% event.published %><br/>
+        <b>Registration Open:</b> <% event.reg_open %><br/>
+        <b>Private Registration:</b> <% event.private_registration %><br/>
+    </p>
+<% END %>
+<p>
+<b>Start Date:</b> <% event.start_date %><br/>
+<b>End Date:</b> <% event.end_date %>
+</p>
+<h3>Registration</h3>
+<div id="eventRegistration">
+    <% IF event.reg_open == 1  && event.private_registration == 0 %>
+        <a href="/events/upcomming/<% event.uuid %>/signup">Register</a>
+    <% ELSE %>
+        Registration is currently closed.
+    <% END %>
+</div>
+<% event.description %>

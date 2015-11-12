@@ -1,0 +1,36 @@
+<% IF session.user.admin == 1 %>
+    <div class="dropdown" id="eventActions">
+        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+            Event Admin
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a href="/events/past/<% event.uuid %>/edit">Edit</a></li>
+            <% IF event.published == 0 %>
+                <li><a href="/events/past/<% event.uuid %>/publish">Publish</a></li>
+            <% ELSE %>
+                <li><a href="/events/past/<% event.uuid %>/unpublish">Unpublish</a></li>
+            <% END %>
+            <li><a href="/events/past/<% event.uuid %>/delete">Delete</a></li>
+
+        </ul>
+    </div>
+<% END %>
+<h1><% event.title %></h1>
+<h5><% event.byline %></h5>
+<div style="text-align: center">
+    <img src="/image/<% event.banner_image %>"/>
+</div>
+&nbsp;<br/>
+&nbsp;<br/>
+<% IF session.user.admin == 1 %>
+    <h4>Event Status</h4>
+    <p>
+        <b>Published:</b> <% event.published %><br/>
+    </p>
+<% END %>
+<p>
+<b>Start Date:</b> <% event.start_date %><br/>
+<b>End Date:</b> <% event.end_date %>
+</p>
+<% event.description %>

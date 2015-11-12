@@ -1,0 +1,40 @@
+<% IF session.user.admin == 1 %>
+    <div id="createEvent"><a class="btn btn-default" href="/events/past/create">Create Event</a></div>
+<% END %>
+<h1>Past Events</h1>
+
+<% x=0 %>
+<% FOREACH event IN events %>
+    <% IF x == 0 %>
+        <div class="row">
+    <% END %>
+    <div class="col-lg-4">
+      <div class="thumbnail">
+          <img src="/image/<% event.logo_image %>" alt="Lineup">
+          <div class="caption">
+            <h2><% event.title %></h2>
+            <% IF event.start_date == event.end_date %>
+                <h5><% event.start_date %></h5>
+            <% ELSE %>
+                <h5><% event.start_date %> - <% event.end_date %></h5>
+            <% END %>
+            <p><% event.summary %>
+            <p><a class="btn btn-primary" href="/events/past/<% event.uuid %>" role="button">View details</a></p>
+            <% IF session.user.admin == 1 %>
+            <hr>
+            <p>
+                Published: <% event.published %><br/>
+            </p>
+            <% END %>
+          </div>
+      </diV>
+    </div>
+    <% x = x+1 %>
+    <% IF x == 3 %>
+        <% x =0 %>
+        </div>
+    <% END %>
+<% END %>
+<% IF X != 0 && results.size != 0%>
+    </div>
+<% END %>

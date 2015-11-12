@@ -1,0 +1,6 @@
+<Database>
+    Module      = Mdm::DB
+    DSN         = dbi:mysql:database=mdm;host=db-w
+    User        = xxxxxxx
+    Password    = xxxxxxx
+</Database>
