@@ -5,10 +5,12 @@ use warnings;
 use Dancer ':syntax';
 use Dancer::Plugin::DBIC qw(schema resultset rset);
 use Dancer::Plugin::FlashMessage;
+use Dancer::Plugin::Email;
 use Data::Dumper;
 use Email::Valid;
 use UUID::Tiny ':std';
 use Crypt::SaltedHash;
+use Authen::SASL;
  
 
 
@@ -129,6 +131,12 @@ post '/register' => sub {
         token => $uuid,
     });
     $user->insert;
+    email {
+        from    => 'Midwest Dirt Mafia <webmaster@midwestdirtmafia.com>',
+        to      => "$fName $lName <$email>",
+        subject => 'Midwest Dirt Fafia Account Activation',
+        body    => "Dear $fName,\nPlease use the following link to activate your account: ".config->{baseurl}."/activate/$uuid\n\nThanks\nThe Midwest Dirt Mafia Team.",
+    };
     template 'registered';
 };
 
