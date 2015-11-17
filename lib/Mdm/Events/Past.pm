@@ -63,8 +63,8 @@ post '/create' => sub {
         return redirect '/';
     }
     my $title = param 'title';
-    my $startDate = param 'startDate';
-    my $endDate = param 'endDate';
+    my $start_date = param 'start_date';
+    my $end_date = param 'end_date';
     my $published = param 'published';
     my $byline = param 'byline';
     my $summary = param 'summary';
@@ -73,31 +73,31 @@ post '/create' => sub {
     my $bannerUpload = upload('bannerFile');
     if (!defined($title)) {
         flash error => "Title not defined";
-        return template 'past/create', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+        return template 'past/create', { title => $title, start_date => $start_date, end_date => $end_date, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
-    if (!defined($startDate)) {
-        flash error => "Start Date not defined";
-        return template 'past/create', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+    if (!defined($start_date)) {
+        flash error => "Start _date not defined";
+        return template 'past/create', { title => $title, start_date => $start_date, end_date => $end_date, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
-    if (!defined($endDate)) {
-        flash error => "End Date not defined";
-        return template 'past/create', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+    if (!defined($end_date)) {
+        flash error => "End _date not defined";
+        return template 'past/create', { title => $title, start_date => $start_date, end_date => $end_date, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
     if (!defined($desc) ) {
         flash error => "Description not defined";
-        return template 'past/create', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+        return template 'past/create', { title => $title, start_date => $start_date, end_date => $end_date, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
     if (!defined($summary) ) {
         flash error => "Description not defined";
-        return template 'past/create', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+        return template 'past/create', { title => $title, start_date => $start_date, end_date => $end_date, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
     if (!defined($logoUpload)) {
         flash error => "Logo file not defined";
-        return template 'past/create', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+        return template 'past/create', { title => $title, start_date => $start_date, end_date => $end_date, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
     if (!defined($bannerUpload)  ) {
         flash error => "Banner file not defined";
-        return template 'past/create', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+        return template 'past/create', { title => $title, start_date => $start_date, end_date => $end_date, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
 
     my $logoHash = handle_image_upload($logoUpload);
@@ -107,8 +107,8 @@ post '/create' => sub {
     my $insertData = {
         uuid        => $uuid,
         title       => $title,
-        start_date  => $startDate,
-        end_date     => $endDate,
+        start_date  => $start_date,
+        end_date     => $end_date,
         published   => $published ? 1 :  0,
         user_id     => session('user')->{id},
         description => $desc,
