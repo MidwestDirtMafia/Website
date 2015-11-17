@@ -169,7 +169,7 @@ post '/register' => sub {
     email {
         from    => 'Midwest Dirt Mafia <webmaster@midwestdirtmafia.com>',
         to      => $data->{first_name}." ".$data->{last_name}." <".$data->{email}.">",
-        subject => 'Midwest Dirt Fafia Account Activation',
+        subject => 'Midwest Dirt Mafia Account Activation',
         body    => "Dear ".$data->{first_name}.",\nPlease use the following link to activate your account: ".config->{baseurl}."/activate/".$data->{token}."\n\nThanks\nThe Midwest Dirt Mafia Team.",
     };
     template 'user/registered';
