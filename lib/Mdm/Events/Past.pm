@@ -11,7 +11,23 @@ use Mdm::Utils;
 use Clone 'clone';
 
 prefix '/events/past';
+hook 'before' => sub {
+    return if (request->path_info !~ m{^/events/past});
 
+    my $uuid = param('uuid');
+    if (defined($uuid)) {
+        if (!is_uuid_string($uuid)) {
+            flash error => "Invalid event ID.";
+            return redirect '/events/past';
+        }
+        my $event = schema->resultset("PastEvent")->find({ uuid => $uuid });
+        if (!defined($event)) {
+            flash error => "Invalid Event ID";
+            return redirect '/events/past';
+        }
+        var 'event' => $event;
+    }
+};
 get '/' => sub {
     my $events = [];
     my $filter = {
@@ -26,7 +42,7 @@ get '/' => sub {
     while (my $event = $rs->next) {
         push @$events, $event->{_column_data};
     }
-    template 'past_events', { nav_current => "past", events => $events };
+    template 'past/events', { nav_current => "past", events => $events };
 };
 
 
@@ -34,9 +50,9 @@ get '/create' => sub {
     my $user = session('user');
     if (!defined($user) || $user->{admin} == 0) {
         flash error => "Access Denined";
-        return template 'index';
+        return redirect '/';
     }
-    template 'create_past_event', { submit => "Create", filesRequired => "required" };
+    template 'past/create', { submit => "Create", filesRequired => "required" };
 };
 
 
@@ -44,7 +60,7 @@ post '/create' => sub {
     my $user = session('user');
     if (!defined($user) || $user->{admin} == 0) {
         flash error => "Access Denined";
-        return template 'index';
+        return redirect '/';
     }
     my $title = param 'title';
     my $startDate = param 'startDate';
@@ -57,31 +73,31 @@ post '/create' => sub {
     my $bannerUpload = upload('bannerFile');
     if (!defined($title)) {
         flash error => "Title not defined";
-        return template 'create_past_event', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+        return template 'past/create', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
     if (!defined($startDate)) {
         flash error => "Start Date not defined";
-        return template 'create_past_event', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+        return template 'past/create', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
     if (!defined($endDate)) {
         flash error => "End Date not defined";
-        return template 'create_past_event', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+        return template 'past/create', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
     if (!defined($desc) ) {
         flash error => "Description not defined";
-        return template 'create_past_event', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+        return template 'past/create', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
     if (!defined($summary) ) {
         flash error => "Description not defined";
-        return template 'create_past_event', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+        return template 'past/create', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
     if (!defined($logoUpload)) {
         flash error => "Logo file not defined";
-        return template 'create_past_event', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+        return template 'past/create', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
     if (!defined($bannerUpload)  ) {
         flash error => "Banner file not defined";
-        return template 'create_past_event', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+        return template 'past/create', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
 
     my $logoHash = handle_image_upload($logoUpload);
@@ -107,42 +123,21 @@ post '/create' => sub {
 };
 
 get '/:uuid' => sub {
-    my $uuid = param('uuid');
-    if (!is_uuid_string($uuid)) {
-        flash error => "Please check the link you used to activate your account";
-        return template 'index';
-    }
-    my $event = schema->resultset("PastEvent")->find({ uuid => $uuid });
-    if (!defined($event)) {
-        flash error => "Invalid Event";
-        return template 'past_events';
-    }
-    template 'past_event', { event => $event->{_column_data}};
+    template 'past/event', { event => vars->{event}};
 };
 
 get '/:uuid/edit' => sub {
     my $user = session('user');
     if (!defined($user) || $user->{admin} == 0) {
         flash error => "Access Denined";
-        return template 'index';
+        return redirect '/';
     }
-    my $uuid = param('uuid');
-    if (!is_uuid_string($uuid)) {
-        flash error => "Invalid event";
-        return template 'past_events';
-    }
-    my $event = schema->resultset("PastEvent")->find({ uuid => $uuid });
-    if (!defined($event)) {
-        flash error => "Invalid Event";
-        return template 'past_events';
-    }
-    my $data = clone($event->{_column_data});
-    $data->{startDate} = delete $data->{start_date};
-    $data->{endDate} = delete $data->{end_date};
+    
+    my $data = clone(vars->{event}->{_column_data});
     $data->{published} = $data->{published} ? 'checked' : '';
     $data->{filesRequired} = '';
     $data->{submit} = "Save";
-    template 'create_past_event', $data;
+    template 'past/create', $data;
 };
 
 post '/:uuid/edit' => sub {
@@ -151,19 +146,10 @@ post '/:uuid/edit' => sub {
         flash error => "Access Denined";
         return template 'index';
     }
-    my $uuid = param('uuid');
-    if (!is_uuid_string($uuid)) {
-        flash error => "Invalid event";
-        return template 'past_events';
-    }
-    my $event = schema->resultset("PastEvent")->find({ uuid => $uuid });
-    if (!defined($event)) {
-        flash error => "Invalid Event";
-        return template 'past_events';
-    }
+    my $event = vars->{event};
     my $title = param 'title';
-    my $startDate = param 'startDate';
-    my $endDate = param 'endDate';
+    my $start_date = param 'start_date';
+    my $end_date = param 'end_date';
     my $published = param 'published';
     my $byline = param 'byline';
     my $summary = param 'summary';
@@ -172,28 +158,28 @@ post '/:uuid/edit' => sub {
     my $bannerUpload = upload('bannerFile');
     if (!defined($title)) {
         flash error => "Title not defined";
-        return template 'create_past_event', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+        return template 'past/create', { title => $title, start_date => $start_date, end_date => $end_date, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
-    if (!defined($startDate)) {
-        flash error => "Start Date not defined";
-        return template 'create_past_event', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+    if (!defined($start_date)) {
+        flash error => "Start _date not defined";
+        return template 'past/create', { title => $title, start_date => $start_date, end_date => $end_date, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
-    if (!defined($endDate)) {
-        flash error => "End Date not defined";
-        return template 'create_past_event', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+    if (!defined($end_date)) {
+        flash error => "End _date not defined";
+        return template 'past/create', { title => $title, start_date => $start_date, end_date => $end_date, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
     if (!defined($desc) ) {
         flash error => "Description not defined";
-        return template 'create_past_event', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+        return template 'past/create', { title => $title, start_date => $start_date, end_date => $end_date, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
     if (!defined($summary) ) {
         flash error => "Description not defined";
-        return template 'create_past_event', { title => $title, startDate => $startDate, endDate => $endDate, published => $published, description => $desc, summary => $summary, byline => $byline };
+        return template 'past/create', { title => $title, start_date => $start_date, end_date => $end_date, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
     $event->update({
         title       => $title,
-        start_date  => $startDate,
-        end_date     => $endDate,
+        start_date  => $start_date,
+        end_date     => $end_date,
         published   => $published ? 1 :  0,
         description => $desc,
         summary     => $summary,
@@ -208,7 +194,7 @@ post '/:uuid/edit' => sub {
         $event->update({ banner_image => $bannerHash });
     }
 
-    redirect "/events/past/$uuid";
+    redirect "/events/past/".vars->{event}->uuid;
 };
 
 
@@ -216,59 +202,25 @@ get '/:uuid/publish' => sub {
     my $user = session('user');
     if (!defined($user) || $user->{admin} == 0) {
         flash error => "Access Denined";
-        return template 'index';
+        return redirect '/';
     }
-    my $uuid = param('uuid');
-    if (!is_uuid_string($uuid)) {
-        flash error => "Invalid event";
-        return template 'past_events';
-    }
-    my $event = schema->resultset("PastEvent")->find({ uuid => $uuid });
-    if (!defined($event)) {
-        flash error => "Invalid Event";
-        return template 'past_events';
-    }
-    $event->update({ published => 1});
-    redirect "/events/past/$uuid";
+    vars->{event}->update({ published => 1});
+    redirect "/events/past/".vars->{event}->uuid;
 };
 
 get '/:uuid/unpublish' => sub {
     my $user = session('user');
     if (!defined($user) || $user->{admin} == 0) {
         flash error => "Access Denined";
-        return template 'index';
+        return redirect '/';
     }
-    my $uuid = param('uuid');
-    if (!is_uuid_string($uuid)) {
-        flash error => "Invalid event";
-        return template 'past_events';
-    }
-    my $event = schema->resultset("PastEvent")->find({ uuid => $uuid });
-    if (!defined($event)) {
-        flash error => "Invalid Event";
-        return template 'past_events';
-    }
-    $event->update({ published => 0});
-    redirect "/events/past/$uuid";
+    vars->{event}->update({ published => 0});
+    redirect "/events/past/".vars->{event}->uuid;
 };
 
 get '/:uuid/delete' => sub {
     my $user = session('user');
-    if (!defined($user) || $user->{admin} == 0) {
-        flash error => "Access Denined";
-        return template 'index';
-    }
-    my $uuid = param('uuid');
-    if (!is_uuid_string($uuid)) {
-        flash error => "Invalid event";
-        return template 'past_events';
-    }
-    my $event = schema->resultset("PastEvent")->find({ uuid => $uuid });
-    if (!defined($event)) {
-        flash error => "Invalid Event";
-        return template 'past_events';
-    }
-    $event->delete();
+    vars->{event}->delete();
     redirect "/events/past";
 };
 1;

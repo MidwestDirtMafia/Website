@@ -31,12 +31,12 @@ post '/' => sub {
     my $user = session('user');
     if (!defined($user) || $user->{admin} == 0) {
         flash error => "Access Denined";
-        return template 'index';
+        return redirect '/';
     }
     my $upload = upload('file');
     if (!defined($upload)) {
         flash error => "Access Denined";
-        return template 'index';
+        return redirect '/';
     }
     return handle_image_upload($upload);
 };

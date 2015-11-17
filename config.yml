@@ -19,7 +19,7 @@ session: "YAML"
 
 template: template_toolkit
 
-
+baseurl: http://scratch.home.tomjudge.com:3000
 
 plugins:
     DBIC:
@@ -31,3 +31,11 @@ plugins:
             options:
                 RaiseError: 1
                 PrintError: 1
+    Email:
+        headers:
+            sender: 'webmaster@midwestdirtmafia.com'
+            from: 'webmaster@midwestdirtmafia.com'
+            subject: 'default subject'
+            X-Mailer: 'Mdm 1.0'
+            X-Accept-Language: 'en'
+

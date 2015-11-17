@@ -1,0 +1,18 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3>Support Driver - <% user.first_name %> <% user.last_name %></h3>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i><% user.support_profile.byline %></i>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-6">
+                <h4>Bio</h4>
+                <% user.support_profile.bio %>
+                <h4>Vehicle</h4>
+                <% user.support_profile.vehicle %>
+                <% user.support_profile.vehicle_description %>
+            </div>
+        </div>
+    </div>
+</div>
+

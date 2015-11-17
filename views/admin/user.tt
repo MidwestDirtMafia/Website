@@ -1,0 +1,88 @@
+<ol class="breadcrumb">
+  <li><a href="/admin">Admin</a></li>
+  <li><a href="/admin/users">Users</a></li>
+  <li class="active"><% user.email %></li>
+</ol>
+<div class="panel panel-default">
+    <div class="panel-heading">User Information</div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="row">
+                    <label for="firstName" class="col-sm-4">First Name</label>
+                    <div class="col-sm-8">
+                        <p id="firstName" ><% user.first_name %></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="lastName" class="col-sm-4">Last Name</label>
+                    <div class="col-sm-8">
+                        <p id="lastName"><% user.last_name %></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="email" class="col-sm-4">Email</label>
+                    <div class="col-sm-8 ">
+                        <p id="email"><% user.email %></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="status" class="col-sm-4 ">Account Status</label>
+                    <div class="col-sm-8 ">
+                        <p id="status" class=""><% user.user_status.status %></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="admin" class="col-sm-4 ">Admin</label>
+                    <div class="col-sm-8 ">
+                        <p id="admin" class=""><% user.admin %></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="support" class="col-sm-4 ">Support Driver</label>
+                    <div class="col-sm-8 ">
+                        <p id="support" class=""><% user.support %></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="created" class="col-sm-4 ">Created</label>
+                    <div class="col-sm-8 ">
+                        <p id="created" class=""><% user.created %></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="updated" class="col-sm-4 ">Updated</label>
+                    <div class="col-sm-8 ">
+                        <p id="updated" class=""><% user.updated %></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-primary" >
+                    <div class="panel-heading">Account Controls</div>
+                    <div class="panel-body">
+                        <ul>
+                        <% IF user.user_status_id == 2 %>
+                            <li><a href="/admin/users/<% user.id %>/disable">Disable Account</a></li>
+                        <% END %>
+                        <% IF user.user_status_id == 4 %>
+                            <li><a href="/admin/users/<% user.id %>/enable">Enable Account</a></li>
+                        <% END %>
+                        <% IF user.admin == 1 %>
+                            <li><a href="/admin/users/<% user.id %>/admin/disable">Disable Admin Access</a></li>
+                        <% ELSE %>
+                            <li><a href="/admin/users/<% user.id %>/admin/enable">Enable Admin Access</a></li>
+                        <% END %>
+                        <% IF user.support == 1 %>
+                            <li><a href="/admin/users/<% user.id %>/support/disable">Disable Support Driver</a></li>
+                        <% ELSE %>
+                            <li><a href="/admin/users/<% user.id %>/support/enable">Enable Support Driver</a></li>
+                        <% END %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

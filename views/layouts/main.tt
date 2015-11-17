@@ -6,10 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Midwest Dirt Mafia</title>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     <link href="/scripts/summernote/summernote.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css">
+
     <link rel="stylesheet" href="/css/style.css">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -20,54 +21,64 @@
     <![endif]-->
   </head>
   <body>
-    <div class="container">
-        <div id="login">
-          <% IF session.user %>
-            <a href="/logout">Logout</a>
-          <% ELSE %>
-            <a href="/login">Login</a> / <a href="/register">Register</a>
-          <% END %>
-        </div>
-      <div class="masthead">
-        <h3 class=text-muted">Midwest Dirt Mafia</h3>
-        <nav>
-          <ul class="nav nav-justified">
-            <% IF nav_current == 'home' %>
-              <li class="active"><a href="/">Home <span class="sr-only">(current)</span></a></li>
-            <% ELSE %>
-              <li><a href="/">Home</a></li>
-            <% END %>
-            <% IF nav_current == 'upcomming' %>
-              <li class="active"><a href="/events/upcomming">Upcomming Events <span class="sr-only">(current)</span></a></li>
-            <% ELSE %>
-              <li><a href="/events/upcomming">Upcomming Events</a></li>
-            <% END %>
-            <% IF nav_current == 'past' %>
-              <li class="active"><a href="/events/past">Past Events <span class="sr-only">(current)</span></a></li>
-            <% ELSE %>
-              <li><a href="/events/past">Past Events</a></li>
-            <% END %>
-            <% IF nav_current == 'about' %>
-              <li class="active"><a href="/about">About <span class="sr-only">(current)</span></a></li>
-            <% ELSE %>
-              <li><a href="/about">About</a></li>
-            <% END %>
-          </ul>
-        </nav>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        <a class="navbar-brand" href="/">Midwest Dirt Mafia</a>
       </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <% IF nav_current == 'future' %>
+            <li class="active"><a href="/events/future">Future Events <span class="sr-only">(current)</span></a></li>
+          <% ELSE %>
+            <li><a href="/events/future">Future Events</a></li>
+          <% END %>
+          <% IF nav_current == 'past' %>
+            <li class="active"><a href="/events/past">Past Events <span class="sr-only">(current)</span></a></li>
+          <% ELSE %>
+            <li><a href="/events/past">Past Events</a></li>
+          <% END %>
+          <% IF nav_current == 'about' %>
+            <li class="active"><a href="/about">About <span class="sr-only">(current)</span></a></li>
+          <% ELSE %>
+            <li><a href="/about">About</a></li>
+          <% END %>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <% IF session.user %>
+            <% IF session.user.admin == 1 %>
+              <li><a href="/admin">Admin</a></li>
+            <% END %>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/logout">Logout</a></li>
+          <% ELSE %>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
+          <% END %>
+        </ul>
+      </div>
+    </nav>
+    <div class="container theme-showcase" role="main">
       <% IF flash.error %>
         <div class="alert alert-danger" role="alert"><% flash.error %></div>
       <% END %>
       <% IF flash.info %>
         <div class="alert alert-info" role="alert"><% flash.info %></div>
       <% END %>
-    <% content %>
+      <% content %>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="/scripts/bootstrap-validator/validator.min.js"></script>
     <script src="/scripts/summernote/summernote.min.js"></script>
-    <script src="/scripts/script.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
+  <script src="/scripts/script.js"></script>
 
   </body>
 </html>

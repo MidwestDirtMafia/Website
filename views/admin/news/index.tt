@@ -1,0 +1,24 @@
+<ol class="breadcrumb">
+  <li><a href="/admin">Admin</a></li>
+  <li class="active">News</li>
+</ol>
+<div class="panel panel-default">
+    <div class="panel-heading">News Management</div>
+    <div class="panel-body">
+        <div id="additionalNewsToolbar">
+            <a class="btn btn-default"  name="addNews" title="Add News" data-toggle="modal" href="/admin/news/create"><i class="glyphicon glyphicon-plus"></i></a>
+        </div>
+        <table id="newsTable" data-toggle="table" data-side-pagination="server" data-search="true" data-url="/admin/news/list" data-pagination="true" data-toolbar="#additionalNewsToolbar">
+            <thead>
+                <tr>
+                    <th data-field="title" data-width="70%">Title</th>
+                    <th data-field="date">Date</th>
+                    <th data-field="news_id" data-formatter="formatNewsDelete"></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <div class="panel-footer"><i>NOTE: Double click and article to edit</i></div>
+</div>

@@ -10,7 +10,7 @@ use Data::Dumper;
 use Mdm::Utils;
 use Clone 'clone';
 
-use Mdm::Events::Upcomming;
+use Mdm::Events::Future;
 use Mdm::Events::Past;
 
 prefix '/events';

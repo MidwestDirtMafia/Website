@@ -1,0 +1,131 @@
+<div class="panel panel-default">
+  <div class="panel-heading"><h4>Create Future Event</h4></div>
+  <div class="panel-body">
+    <form id="createEventForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="description" id="eventDescription"/>
+      <div class="form-group">
+        <label for="title" class="col-sm-2 control-label">Event Title</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" name="title" id="title" placeholder="Event Title" data-minlength="2" value="<% title %>" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="byline" class="col-sm-2 control-label">Event Byline</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" name="byline" id="byline" placeholder="Event Byline" value="<% byline %>">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="logoFile" class="col-sm-2 control-label">Small Logo</label>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <span class="btn btn-default btn-file">
+                        Browse&hellip;<input type="file" id="logoFile" name="logoFile" accept="image/*" <% filesRequired %>>
+                    </span>
+                </span>
+                <input type="text" class="form-control" readonly>
+            </div>
+            <p class="help-block">Event logo to be rendered on the list page.</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="bannerFile" class="col-sm-2 control-label">Banner Image</label>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <span class="btn btn-default btn-file">
+                        Browse&hellip; <input type="file" id="bannerFile" name="bannerFile" accept="image/*" <% filesRequired %>>
+                    </span>
+                </span>
+                <input type="text" class="form-control" readonly>
+            </div>
+            <p class="help-block">Event banner logo to be rendered on the event page.</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="eventType" class="col-sm-2 control-label">Type</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="eventType" name="type">
+                <option value="normal"
+                <% IF type == 'normal' %>
+                selected
+                <% END %>
+                >Normal</option>
+                <option value="tentative"
+                <% IF type == 'tentative' %>
+                selected
+                <% END %>
+                >Tentative</option>
+                <option value="partner"
+                <% IF type == 'partner' %>
+                selected
+                <% END %>
+                >Partner</option>
+            </select>
+        </div>
+      </div>
+      <div class="form-group" id="partnerLinkDiv">
+        <label for="partnerLink" class="col-sm-2 control-label">Partner Link</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" name="partner_link" id="partnerLink" placeholder="URL" value="<% partner_link %>">
+        </div>
+      </div>
+      <div id="dateFields">
+          <div class="form-group">
+            <label for="start_date" class="col-sm-2 control-label">Start Date</label>
+            <div class="col-sm-10">
+                <input type="date" id="start_date" name="start_date"  value="<% start_date %>">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="end_date" class="col-sm-2 control-label">End Date</label>
+            <div class="col-sm-10">
+                <input type="date" id="end_date" name="end_date"  value="<% end_date %>">
+            </div>
+          </div>
+      </div>
+      <div class="form-group">
+        <label for="participant_limit" class="col-sm-2 control-label">Participant Limit</label>
+        <div class="col-sm-10">
+            <input type="number" id="participant_limit" name="participant_limit" value="<% participant_limit %>" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="published" class="col-sm-2 control-label">Published</label>
+        <div class="col-sm-10">
+            <input type="checkbox" id="published" <% published %> name="published">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="reg_open" class="col-sm-2 control-label">Registration Open</label>
+        <div class="col-sm-10">
+            <input type="checkbox" id="reg_open"  <% reg_open %> name="reg_open">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="private_registration" class="col-sm-2 control-label">Private Registration</label>
+        <div class="col-sm-10">
+            <input type="checkbox" id="private_registration" <% private_registration %> name="private_registration">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="summary" class="col-sm-2 control-label">Summary</label>
+        <div class="col-sm-10">
+            <textarea class="form-control" rows="3" id="summary" name="summary"><% summary %></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="" class="col-sm-2 control-label">Description</label>
+        <div class="col-sm-10">
+            <div id="summernote"><% description %></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-default"><% submit %></button>
+        </div>
+      </div>
+    </form>
+  </div>
+<div>

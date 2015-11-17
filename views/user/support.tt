@@ -1,0 +1,44 @@
+<ol class="breadcrumb">
+  <li><a href="/profile">Profile</a></li>
+  <li class="active">Support Driver</li>
+</ol>
+<div class="panel panel-default">
+    <div class="panel-heading"><h4>Support Driver Profile - <% user.first_name %> <% user.last_name %></h4></div>
+    <div class="panel-body">
+<form id="supportDriver" class="form-horizontal" method="POST" enctype="multipart/form-data">
+  <input type="hidden" name="bio" id="driverBio"/>
+  <input type="hidden" name="vehicle_description" id="vehicleDescription"/>
+  <div class="form-group">
+    <label for="byline" class="col-sm-2 control-label">Byline</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" name="byline" id="byline" placeholder="Driver Byline" data-minlength="2" value="<% user.support_profile.byline %>" required>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="driverBioEditor" class="col-sm-2 control-label">Driver Bio</label>
+    <div class="col-sm-10">
+        <div id="driverBioEditor"><% user.support_profile.bio %></div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="logoFile" class="col-sm-2 control-label">Vehicle</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" name="vehicle" id="vehicle" placeholder="2010 F-150 Raptor Molten Orange 6.2L" value="<% user.support_profile.vehicle %>">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="bannerFile" class="col-sm-2 control-label">Vehicle Info</label>
+    <div class="col-sm-10">
+        <div id="vehicleDescriptionEditor"><% user.support_profile.vehicle_description %></div>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-default">Update</button>
+    </div>
+  </div>
+</form>
+</div>
+</div>
+
+

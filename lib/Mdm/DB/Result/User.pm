@@ -86,6 +86,29 @@ __PACKAGE__->table("user");
   default_value: 0
   is_nullable: 0
 
+=head2 support
+
+  data_type: 'tinyint'
+  default_value: 0
+  is_nullable: 0
+
+=head2 emergency_contact_name
+
+  data_type: 'char'
+  is_nullable: 0
+  size: 200
+
+=head2 emergency_contact_phone
+
+  data_type: 'char'
+  is_nullable: 0
+  size: 10
+
+=head2 medical_info
+
+  data_type: 'text'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -128,6 +151,14 @@ __PACKAGE__->add_columns(
   },
   "admin",
   { data_type => "tinyint", default_value => 0, is_nullable => 0 },
+  "support",
+  { data_type => "tinyint", default_value => 0, is_nullable => 0 },
+  "emergency_contact_name",
+  { data_type => "char", is_nullable => 0, size => 200 },
+  "emergency_contact_phone",
+  { data_type => "char", is_nullable => 0, size => 10 },
+  "medical_info",
+  { data_type => "text", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -170,6 +201,66 @@ __PACKAGE__->add_unique_constraint("token_UNIQUE", ["token"]);
 
 =head1 RELATIONS
 
+=head2 event_participants
+
+Type: has_many
+
+Related object: L<Mdm::DB::Result::EventParticipant>
+
+=cut
+
+__PACKAGE__->has_many(
+  "event_participants",
+  "Mdm::DB::Result::EventParticipant",
+  { "foreign.user_id" => "self.user_id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 future_events
+
+Type: has_many
+
+Related object: L<Mdm::DB::Result::FutureEvent>
+
+=cut
+
+__PACKAGE__->has_many(
+  "future_events",
+  "Mdm::DB::Result::FutureEvent",
+  { "foreign.user_id" => "self.user_id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 lk_user_future_events
+
+Type: has_many
+
+Related object: L<Mdm::DB::Result::LkUserFutureEvent>
+
+=cut
+
+__PACKAGE__->has_many(
+  "lk_user_future_events",
+  "Mdm::DB::Result::LkUserFutureEvent",
+  { "foreign.user_id" => "self.user_id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 news
+
+Type: has_many
+
+Related object: L<Mdm::DB::Result::News>
+
+=cut
+
+__PACKAGE__->has_many(
+  "news",
+  "Mdm::DB::Result::News",
+  { "foreign.user_id" => "self.user_id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 past_events
 
 Type: has_many
@@ -185,17 +276,17 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
-=head2 upcomming_events
+=head2 support_profile
 
-Type: has_many
+Type: might_have
 
-Related object: L<Mdm::DB::Result::UpcommingEvent>
+Related object: L<Mdm::DB::Result::SupportProfile>
 
 =cut
 
-__PACKAGE__->has_many(
-  "upcomming_events",
-  "Mdm::DB::Result::UpcommingEvent",
+__PACKAGE__->might_have(
+  "support_profile",
+  "Mdm::DB::Result::SupportProfile",
   { "foreign.user_id" => "self.user_id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
@@ -216,8 +307,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07043 @ 2015-11-12 02:07:12
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:M8OsnEmvZZe3lcDN7ExB3A
+# Created by DBIx::Class::Schema::Loader v0.07043 @ 2015-11-16 23:50:44
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:1Bq+CfmNGH/ZLAXzlhl/OQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

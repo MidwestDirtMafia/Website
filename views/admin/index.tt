@@ -1,0 +1,9 @@
+<ol class="breadcrumb">
+  <li class="active">Admin</li>
+</ol>
+<h4>Admin</h4>
+<ul>
+    <li><a href="/admin/news">News</a></li>
+    <li><a href="/admin/sponsors">Sponsors</a></li>
+    <li><a href="/admin/users">Users</a></li>
+</ul>

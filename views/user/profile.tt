@@ -1,0 +1,132 @@
+<ol class="breadcrumb">
+  <li class="active">Profile</li>
+</ol>
+<div class="panel panel-default">
+    <div class="panel-heading">Profile</div>
+    <div class="panel-body">
+        <form class="form-horizontal" method="POST" data-toggle="validator">
+         <input type="hidden" name="reason" value="save"/>
+          <div class="form-group">
+            <label for="firstName" class="col-sm-2 control-label">First Name</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="firstName" id="firstName" placeholder="First Name" data-minlength="2" value="<% user.first_name %>" requird>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="lastName" class="col-sm-2 control-label">Last Name</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Last Name" data-minlength="2" value="<% user.last_name %>" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email" class="col-sm-2 control-label">Email</label>
+            <div class="col-sm-10">
+              <input type="email" class="form-control" name="email" id="email" placeholder="Email" data-error="Email address is invalid" value="<% user.email %>" required>
+              <div class="help-block with-errors"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="emergency_contact_name" class="col-sm-2 control-label">Emergency Contact Name</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="emergency_contact_name" id="emergency_contact_name" placeholder="Name" data-error="Name is invalid" value="<% user.emergency_contact_name %>" required>
+              <div class="help-block with-errors"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="emergency_contact_phone" class="col-sm-2 control-label">Emergency Contact Phone</label>
+            <div class="col-sm-10">
+              <input type="tel" class="form-control" name="emergency_contact_phone" id="emergency_contact_phone" placeholder="0000000000" data-error="Phone Number is invalid" pattern="^\d{10}$" value="<% user.emergency_contact_phone %>" required>
+              <div class="help-block with-errors"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="medical_info" class="col-sm-2 control-label">Emergency Medical Info</label>
+            <div class="col-sm-10">
+              <textarea class="form-control" name="medical_info" id="medical_info"><% user.medical_info %></textarea>
+              <div class="help-block with-errors"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="btn btn-default">Save</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#resetPassword">Reset Password</button>
+            </div>
+          </div>
+          <% IF user.support == 1 %>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <a href="/profile/support" type="button" class="btn btn-default">Support Driver Profile</a>
+            </div>
+          </div>
+          <% END %>
+        </form>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">Additional Participants</div>
+    <div class="panel-body">
+        <div id="additionalParticipantsToolbar">
+            <button class="btn btn-default" type="button" name="addParticipant" title="Add Participant" data-toggle="modal" data-target="#addParticipant"><i class="glyphicon glyphicon-plus"></i></button>
+        </div>
+        <table id="participantsTable" data-toggle="table" data-toolbar="#additionalParticipantsToolbar" data-url="/profile/participants">
+            <thead>
+                <tr>
+                    <th data-field="first_name">First Name</th>
+                    <th data-field="last_name">Last Name</th>
+                    <th data-field="emergency_contact_name">Emergency Contact Name</th>
+                    <th data-field="emergency_contact_phone">Emergency Contact Phone</th>
+                    <th data-field="medical_info">Medical Info</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <p><b>Note:</b> Double click participant to edit</p>
+    </div>
+</div>
+
+<% INCLUDE user/add_participant.tt %>
+<div class="modal fade" id="resetPassword" tabindex="-1" role="dialog" aria-labelledby="resetPasswordLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="resetPasswordLabel">Reset Password</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" method="POST" data-toggle="validator">
+         <input type="hidden" name="reason" value="password"/>
+         <div class="form-group">
+            <label for="password" class="col-sm-2 control-label">Current Password</label>
+            <div class="col-sm-10">
+              <input type="password" class="form-control" name="current" id="current" placeholder="Current Password" data-minlength="6" required>
+            </div>
+          </div>
+         <div class="form-group">
+            <label for="password" class="col-sm-2 control-label">New Password</label>
+            <div class="col-sm-10">
+              <input type="password" class="form-control" name="password" id="password" placeholder="Password" data-minlength="6" required>
+              <span class="help-block">Minimum of 6 characters</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="passwordConf" class="col-sm-2 control-label">Confirm New Password</label>
+            <div class="col-sm-10">
+              <input type="password" class="form-control" id="passwordConf" placeholder="Password" data-match="#password" data-match-error="Whoops, these don't match" required>
+              <div class="help-block with-errors"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="btn btn-default">Reset</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,29 @@
-      <div class="jumbotron">
-        <p>Do you have an idea for a trip but don't know how to execute it? Email us at <a href="mailto:trip-ideas@midwestdirtmafia.com">trip-ideas@midwestdirtmafia.com</a> and we can help you organize it.</p>
-      </div>
+<div class="jumbotron">
+    <div><img src="/images/baner.png" class="img-responsive"/></div>
+    <p>Do you have an idea for a trip but don't know how to execute it? Email us at <a href="mailto:trip-ideas@midwestdirtmafia.com">trip-ideas@midwestdirtmafia.com</a> and we can help you organize it.</p>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <h1>News</h1>
+        <% FOREACH artical IN articals %>
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4><% artical.title %></h4></div>
+                <div class="panel-body"><% artical.content %></div>
+                <div class="panel-footer">
+                    Published by <% artical.user.first_name %> <% artical.user.last_name %> on <% artical.date %>
+                </div>
+            </div>
+        <% END %>
+    </div>
+    <div class="col-md-2">
+        <h1>Sponsors</h1>
+        <% FOREACH sponsor IN sponsors %>
+        <div class="row">
+            <div class="col-lg-4">
+                <a href="<% sponsor.link %>" target="_window"><img src="/image/<% sponsor.image %>" alt="<% sponsor.name %>"/></a>
+            </div>
+        </div>
+        <% END %>
+    </div>
+</div>
 

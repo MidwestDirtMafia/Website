@@ -1,0 +1,23 @@
+<ol class="breadcrumb">
+  <li><a href="/admin">Admin</a></li>
+  <li class="active">Sponsors</li>
+</ol>
+<div class="panel panel-default">
+    <div class="panel-heading">Sponsors Management</div>
+    <div class="panel-body">
+        <div id="additionalSponsorsToolbar">
+            <a class="btn btn-default"  name="addSponsors" title="Add Sponsors" data-toggle="modal" href="/admin/sponsors/create"><i class="glyphicon glyphicon-plus"></i></a>
+        </div>
+        <table id="newsTable" data-toggle="table" data-side-pagination="server" data-search="true" data-url="/admin/sponsors/list" data-pagination="true" data-toolbar="#additionalSponsorsToolbar">
+            <thead>
+                <tr>
+                    <th data-field="name" data-width="70%">Name</th>
+                    <th data-field="sponsor_id" data-formatter="formatSponsorsDelete"></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <div class="panel-footer"><i>NOTE: Double click and article to edit</i></div>
+</div>

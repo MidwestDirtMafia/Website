@@ -1,0 +1,43 @@
+<div class="jumbotron">
+    <p>
+        Midwest Dirt Mafia is a group born of our shared love of offroading the Ford F150 Raptor SVT and our location in and around the Midwest. 
+        Inclusion is a recognition of your awesomeness. We love our Raptors and getting together to have fun and hang out. You are free to 
+        seek assistance, share your pictures and stories and join us in various Raptor excursions around the country. All excursions are free 
+        registration, you only need to cover your expenses. MDM welcomes you!
+    </p>
+    <p>
+        Requirements for membership are: Being Awesome. Must have a love for the off road adventures. No whining.
+    </p>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading"><h4>Support Drivers</h4></div>
+    <div class="panel-body">
+                <p>Here at Midwest Dirt Mafia we proud ourselves on our comunity of support drivers.  These drivers are the face of our community 
+                and strive to make sure you have an awesome time when you attend any of our events, if you have any problems while on one of our
+                trips they will be there to help you out in any way they can.</p>
+                <p>The support drivers are also the people that plan the trips that we do please make sure you thank them for the work that they
+                put in to ensure that you have a great experiance.</p>
+        <% FOR user IN support %>
+            <div class="row">
+                <div class="col-sm-6">
+                    <h5><a href="/about/support/<% user.user_id %>"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;<% user.first_name %> <% user.last_name %></a><h5>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i><% user.support_profile.byline %></i>
+                </div>
+            </div>
+        <% END %>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading"><h4>Sponsors</h4></div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-4">
+                <img src="/images/sponsors/lvj.jpg" alt="LVJ Motorsports"/>
+                <p></p>
+                <p>
+                    <a class="btn btn-primary" href="https://www.facebook.com/pages/LVJ-Motorsports-LLC/1557204011163598" role="button" target="_window">More Information »</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -11,18 +11,34 @@ use Email::Valid;
 use UUID::Tiny ':std';
 use Crypt::SaltedHash;
 use Authen::SASL;
- 
 
 
 our $VERSION = '0.1';
 
+use Mdm::About;
+use Mdm::Admin;
 use Mdm::Events;
 use Mdm::Image;
+use Mdm::Profile;
+
+hook 'after' => sub {
+    return if (request->path_info =~ m/^\/login/);
+    return if (request->path_info =~ m/^\/logout/);
+    return if (request->path_info =~ m/^\/image/);
+    return if (request->path_info =~ m/^image_data/);
+    session last_path => (request->path_info);
+};
 
 prefix '/';
 
 get '/' => sub {
-    template 'index', { nav_current => "home" };
+    my $rs = schema->resultset("Sponsor")->search(undef, { order_by => { -desc => "name" } });
+    my @sponsors;
+    while (my $a = $rs->next) { push @sponsors, $a; }
+    $rs = schema->resultset("News")->search(undef, { order_by => { -desc => "date" }, rows => 5 });
+    my @articals;
+    while (my $a = $rs->next) { push @articals, $a; }
+    template 'index', { articals => \@articals, sponsors => \@sponsors };
 };
 
 get '/login' => sub {
@@ -72,90 +88,110 @@ post '/login' => sub {
         id          => $user->id,
     };
     flash info => "Welcome back ".$user->first_name;
-    redirect '/';
+    if (session('last_path')) {
+        return redirect session('last_path');
+    } else {
+        return redirect '/';
+    }
 };
 
 get '/logout' => sub {
-    session->destroy;
-    redirect '/';
+    session user => undef;
+    if (session('last_path')) {
+        return redirect session('last_path');
+    } else {
+        return redirect '/';
+    }
 };
 
 get '/register' => sub {
     if (session('user')) {
         flash error => 'You are already registered and logged in.';
-        return template 'index';
+        return redirect '/';
     }
-    template 'register';
+    template 'user/register';
 };
 
 post '/register' => sub {
-    my $email = param 'email';
-    my $password = param 'password';
-    my $fName = param 'firstName';
-    my $lName = param 'lastName';
+    if (session('user')) {
+        flash error => "You are already registered";
+        redirect '/';
+    }
+    my $data = {
+        email => param('email'),
+        password => param('password'),
+        first_name => param('first_name'),
+        last_name => param('last_name'),
+        emergency_contact_name  => param('emergency_contact_name'),
+        emergency_contact_phone  => param('emergency_contact_phone'),
+        medical_info => param('medical_info'),
+    };
 
-    if (!defined($email) || !Email::Valid->address($email)) {
+    if (!defined($data->{email}) || !Email::Valid->address($data->{email})) {
         flash error => 'Invalid email address';
-        return template 'register', { email => $email, firstName => $fName, lastName => $lName };
+        return template 'user/register', $data;
     }
-    if (!defined($password)) {
+    if (!defined($data->{password}) && $data->{password} ne "") {
         flash error => 'Invalid password';
-        return template 'register', { email => $email, firstName => $fName, lastName => $lName };
+        return template 'user/register', $data;
     }
-    if (!defined($fName) || $fName !~ m/^[A-Za-z]{2,50}$/) {
+    if (!defined($data->{first_name}) || $data->{first_name} !~ m/^[A-Za-z]{2,50}$/) {
         flash error => 'Invalid first name';
-        return template 'register', { email => $email, firstName => $fName, lastName => $lName };
+        return template 'user/register', $data;
     }
-    if (!defined($lName) || $lName !~ m/^[A-Za-z]{2,50}$/) {
+    if (!defined($data->{last_name}) || $data->{last_name} !~ m/^[A-Za-z]{2,50}$/) {
         flash error => 'Invalid last name';
-        return template 'register', { email => $email, firstName => $fName, lastName => $lName };
+        return template 'user/register', $data;
+    }
+    if (!defined($data->{emergency_contact_name}) || $data->{emergency_contact_name} !~ m/^[A-Za-z ]{2,200}$/) {
+        flash error => 'Invalid emergency contact name';
+        return template 'user/register', $data;
+    }
+    if (!defined($data->{emergency_contact_phone}) || $data->{emergency_contact_phone} !~ m/^\d{10}$/) {
+        flash error => 'Invalid emergency contact phone';
+        return template 'user/register', $data;
     }
 
-    my $user = schema->resultset("User")->find({ email => $email });
+    my $user = schema->resultset("User")->find({ email => $data->{email} });
     if (defined($user)) {
         flash error => 'This email address is already registered.';
-        return template 'register', { email => $email, firstName => $fName, lastName => $lName };
+        return template 'user/register', $data;
     }
 
-    my $uuid = create_uuid_as_string(UUID_RANDOM);
+    $data->{token} = create_uuid_as_string(UUID_RANDOM);
     my $csh = Crypt::SaltedHash->new(algorithm => 'SHA-1');
-    $csh->add($password);
-    my $pass = $csh->generate;
+    $csh->add($data->{password});
+    $data->{password} = $csh->generate;
+    $data->{user_status_id} =1;
 
-    $user = schema->resultset('User')->create({
-        first_name => $fName,
-        last_name => $lName,
-        email => $email,
-        password => $pass,
-        user_status_id => 1,
-        token => $uuid,
-    });
+    $user = schema->resultset('User')->create($data);
     $user->insert;
     email {
         from    => 'Midwest Dirt Mafia <webmaster@midwestdirtmafia.com>',
-        to      => "$fName $lName <$email>",
+        to      => $data->{first_name}." ".$data->{last_name}." <".$data->{email}.">",
         subject => 'Midwest Dirt Fafia Account Activation',
-        body    => "Dear $fName,\nPlease use the following link to activate your account: ".config->{baseurl}."/activate/$uuid\n\nThanks\nThe Midwest Dirt Mafia Team.",
+        body    => "Dear ".$data->{first_name}.",\nPlease use the following link to activate your account: ".config->{baseurl}."/activate/".$data->{token}."\n\nThanks\nThe Midwest Dirt Mafia Team.",
     };
-    template 'registered';
+    template 'user/registered';
 };
 
 get '/activate/:uuid' => sub {
     my $uuid = param('uuid');
     if (!is_uuid_string($uuid)) {
         flash error => "Please check the link you used to activate your account";
-        return template 'index';
+        return redirect '/';
     }
     my $user = schema->resultset("User")->find({ token => $uuid });
     if (!defined($user)) {
         flash error => "Please check the link you used to activate your account";
-        return template 'index';
+        return redirect '/';
     }
     if ($user->user_status_id != 1) {
         flash error => "Your account is already activated please login";
-        return template 'index';
+        return redirect '/login';
     }
     $user->update({ user_status_id => 2 });
-    template 'activated';
+    flash info => "Your account is now activated please login.";
+    redirect '/login';
 };
 1;
