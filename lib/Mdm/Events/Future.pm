@@ -158,7 +158,7 @@ post '/create' => sub {
     }
 
     delete $data->{submit};
-    delete $data->{fileRequired};
+    delete $data->{filesRequired};
     $data->{future_event_type}->{type} = delete $data->{type};
     $data->{uuid} = create_uuid_as_string(UUID_RANDOM);
     $data->{published} = $data->{published} ? 1 :  0;
