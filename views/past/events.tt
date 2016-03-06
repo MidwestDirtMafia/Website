@@ -10,9 +10,9 @@
     <% END %>
     <div class="col-lg-4">
       <div class="thumbnail">
-          <img src="/image/<% event.logo_image %>" alt="Lineup">
+          <a href="/events/past/<% event.uuid %>"><img src="/image/<% event.logo_image %>" alt="Lineup"></a>
           <div class="caption">
-            <h2><% event.title %></h2>
+            <h2> <a href="/events/past/<% event.uuid %>"><% event.title %></a></h2>
             <% IF event.start_date == event.end_date %>
                 <h5><% event.start_date %></h5>
             <% ELSE %>
@@ -35,6 +35,6 @@
         </div>
     <% END %>
 <% END %>
-<% IF X != 0 && results.size != 0%>
+<% IF x != 0 && events.size != 0%>
     </div>
 <% END %>
