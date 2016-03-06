@@ -331,5 +331,9 @@ sub isUserRegistered {
     return $self->search_related("lk_user_future_events", { user_id => $user_id })->count();
 }
 
+sub supportDrivers {
+    my $self = shift;
+    return $self->users->search({ support => 1 });
+}
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
 1;

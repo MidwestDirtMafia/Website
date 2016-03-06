@@ -177,6 +177,15 @@ get '/:uuid' => sub {
     template 'future/event', { event => vars->{event} };
 };
 
+get '/:uuid/participants' => sub {
+    my $user = session('user');
+    if (!defined($user) || $user->{admin} == 0) {
+        flash error => "Access Denined";
+        return template 'index';
+    }
+    template 'future/participants', { event => vars->{event} };
+};
+
 get '/:uuid/edit' => sub {
     my $user = session('user');
     if (!defined($user) || $user->{admin} == 0) {
