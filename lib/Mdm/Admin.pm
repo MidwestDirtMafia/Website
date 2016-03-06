@@ -80,6 +80,12 @@ get '/users/:id/disable' => sub {
     vars->{user}->update({ user_status_id => 4 });
     redirect "/admin/users/".vars->{user}->id;
 };
+get '/users/:id/delete' => sub {
+    my $u = vars->{user};
+    $u->lk_user_future_events->delete;
+    $u->delete;
+    redirect "/admin/users";
+};
 
 get '/users/:id/admin/enable' => sub {
     vars->{user}->update({ admin => 1 });

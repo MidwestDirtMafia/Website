@@ -1,5 +1,5 @@
 <div class="jumbotron">
-<h4>Sign In</h4>
+<h4>Reset Password</h4>
 <form class="form-horizontal" method="POST" data-toggle="validator">
   <div class="form-group">
     <label for="email" class="col-sm-2 control-label">Email</label>
@@ -8,15 +8,8 @@
     </div>
   </div>
   <div class="form-group">
-    <label for="password" class="col-sm-2 control-label">Password</label>
-    <div class="col-sm-10">
-      <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-    </div>
-  </div>
-  <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-default">Sign in</button>
-      <a class="btn btn-default" href="/pwreset" role="button">Reset Password</a>
+      <button type="submit" class="btn btn-default">Reset Password</button>
     </div>
   </div>
 </form>

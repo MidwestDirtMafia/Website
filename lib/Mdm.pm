@@ -41,6 +41,92 @@ get '/' => sub {
     template 'index', { articals => \@articals, sponsors => \@sponsors };
 };
 
+get '/pwreset' => sub {
+    if (session('user')) {
+        redirect '/';
+    }
+    template 'pwreset';
+};
+
+post '/pwreset' => sub {
+    if (session('user')) {
+        redirect '/';
+    }
+    my $email = param 'email';
+    if (!defined($email) || !Email::Valid->address($email)) {
+        flash error => 'Invalid email address.';
+        return template 'pwreset';
+    }
+    my $user = schema->resultset("User")->find({ email => $email });
+    if (!defined($user)) {
+        flash error => 'Reset password failure.';
+        return redirect '/login';
+    }
+    my $token = create_uuid_as_string(UUID_RANDOM);
+    $user->update({
+        user_status_id => 5,
+        token => $token,
+    });
+    email {
+        from    => 'Midwest Dirt Mafia <webmaster@midwestdirtmafia.com>',
+        to      => $user->first_name." ".$user->last_name." <".$user->email.">",
+        subject => 'Midwest Dirt Mafia Password Reset',
+        body    => "Dear ".$user->first_name.",\nPlease use the following link to reset your password: ".config->{baseurl}."/pwreset/".$token."\n\nThanks\nThe Midwest Dirt Mafia Team.",
+    };
+    flash info => 'Please check your email for instructions on how to reset your password.';
+    return redirect '/login';
+
+};
+
+get '/pwreset/:uuid' => sub {
+    my $uuid = param('uuid');
+    if (!is_uuid_string($uuid)) {
+        flash error => "Please check the link you used to reset your password.";
+        return redirect '/';
+    }
+    my $user = schema->resultset("User")->find({ token => $uuid });
+    if (!defined($user)) {
+        flash error => "Please check the link you used to reset your password.";
+        return redirect '/';
+    }
+    if ($user->user_status_id != 5) {
+        flash error => "Invalid password reset link.";
+        return redirect '/login';
+    }
+    template 'newpassword';
+};
+post '/pwreset/:uuid' => sub {
+    my $uuid = param('uuid');
+    my $password = param 'password';
+
+    if (!is_uuid_string($uuid)) {
+        flash error => "Please check the link you used to reset your password.";
+        return redirect '/';
+    }
+    if (!defined($password) && $password ne "") {
+        flash error => 'Invalid password';
+        return template 'newpassword';
+    }
+    my $user = schema->resultset("User")->find({ token => $uuid });
+    if (!defined($user)) {
+        flash error => "Please check the link you used to reset your password.";
+        return redirect '/';
+    }
+    if ($user->user_status_id != 5) {
+        flash error => "Invalid password reset link.";
+        return redirect '/login';
+    }
+    my $csh = Crypt::SaltedHash->new(algorithm => 'SHA-1');
+    $csh->add($password);
+    $user->update({
+        password => $csh->generate,
+        user_status_id => 2,
+    });
+    flash info => "Password reset please log in with your new password.";
+    redirect '/login';
+};
+
+
 get '/login' => sub {
     if (session('user')) {
         redirect '/';
