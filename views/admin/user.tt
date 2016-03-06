@@ -75,6 +75,7 @@
                         <% END %>
                         <% IF user.support == 1 %>
                             <li><a href="/admin/users/<% user.id %>/support/disable">Disable Support Driver</a></li>
+                            <li><a href="/admin/users/<% user.id %>/support/edit">Edit Support Pofile</a></li>
                         <% ELSE %>
                             <li><a href="/admin/users/<% user.id %>/support/enable">Enable Support Driver</a></li>
                         <% END %>
