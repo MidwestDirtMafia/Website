@@ -97,6 +97,49 @@ get '/users/:id/support/disable' => sub {
     vars->{user}->update({ support => 0 });
     redirect "/admin/users/".vars->{user}->id;
 };
+get '/users/:id/support/edit' => sub {
+    template 'user/support', { user => vars->{user} };
+};
+
+post '/users/:id/support/edit' => sub {
+    my $u = vars->{user};
+    if ($u->support == 0){
+        flash error => "Access Denined";
+        return redirect '/profile';
+    }
+    my $byline = param 'byline';
+    my $bio = param 'bio';
+    my $vehicle = param 'vehicle';
+    my $vehicle_description = param 'vehicle_description';
+    if (!defined($byline)) {
+        flash error => "Bad Byline";
+        return template 'user/support', { user => $u };
+    }
+    if (!defined($bio)) {
+        flash error => "Bad Bio";
+        return template 'user/support', { user => $u };
+    }
+    if (!defined($vehicle)) {
+        flash error => "Bad Vehicle Info";
+        return template 'user/support', { user => $u };
+    }
+    if (!defined($vehicle_description)) {
+        flash error => "Bad Vehicle Description";
+        return template 'user/support', { user => $u };
+    }
+    my $data = {
+        byline => $byline,
+        bio => $bio,
+        vehicle => $vehicle,
+        vehicle_description => $vehicle_description,
+    };
+    if (defined($u->support_profile)) {
+        $u->support_profile->update($data);
+    } else {
+        $u->create_related("support_profile", $data);
+    }
+    template 'user/support', { user => $u };
+};
 
 get '/news' => sub {
     template 'admin/news/index';
