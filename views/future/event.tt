@@ -39,6 +39,12 @@
         </div>
         &nbsp;<br/>
         &nbsp;<br/>
+        <div
+            class="fb-like"
+            data-share="true"
+            data-width="450"
+            data-show-faces="true">
+        </div>
         <% IF session.user.admin == 1 %>
         <div id="eventStatus" class="panel panel-primary">
             <div class="panel-heading">Event Status</div>

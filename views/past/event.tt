@@ -23,11 +23,23 @@
 </div>
 &nbsp;<br/>
 &nbsp;<br/>
+<div
+    class="fb-like"
+    data-share="true"
+    data-width="450"
+    data-show-faces="true">
+</div>
 <% IF session.user.admin == 1 %>
+<div id="eventStatus" class="panel panel-default">
+    <div class="panel-heading">
     <h4>Event Status</h4>
+    </div>
+    <div class="panel-body">
     <p>
         <b>Published:</b> <% event.published %><br/>
     </p>
+    </div>
+</div>
 <% END %>
 <p>
 <b>Start Date:</b> <% event.start_date %><br/>
