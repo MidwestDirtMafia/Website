@@ -161,6 +161,7 @@ post '/create' => sub {
     delete $data->{filesRequired};
     $data->{future_event_type}->{type} = delete $data->{type};
     $data->{uuid} = create_uuid_as_string(UUID_RANDOM);
+    $data->{private_uuid} = create_uuid_as_string(UUID_RANDOM);
     $data->{published} = $data->{published} ? 1 :  0;
     $data->{reg_open} = $data->{reg_open} ? 1 : 0;
     $data->{private_registration} = $data->{private_registration} ? 1 : 0;
