@@ -10,9 +10,9 @@
     <% END %>
     <div class="col-lg-4">
       <div class="thumbnail panel-body">
-          <img src="/image/<% event.logo_image %>" alt="Lineup">
+          <a href="/events/future/<% event.uuid %>"><img src="/image/<% event.logo_image %>" alt="Lineup"></a>
           <div class="caption">
-            <h2><% event.title %></h2>
+            <h2> <a href="/events/future/<% event.uuid %>"><% event.title %></a></h2>
             <% IF event.future_event_type.type == 'tentative' %>
                 <b>Dates yet to be decieded.</b>
             <% ELSE %>
@@ -47,6 +47,56 @@
         </div>
     <% END %>
 <% END %>
-<% IF X != 0 && results.size != 0%>
+<% IF x != 0 && events.size != 0%>
+    </div>
+<% END %>
+
+<h1>Archived Events</h1>
+
+<% x=0 %>
+<% FOREACH event IN archived_events %>
+    <% IF x == 0 %>
+        <div class="row">
+    <% END %>
+    <div class="col-lg-4">
+      <div class="thumbnail panel-body">
+          <a href="/events/future/<% event.uuid %>"><img src="/image/<% event.logo_image %>" alt="Lineup"></a>
+          <div class="caption">
+            <h2> <a href="/events/future/<% event.uuid %>"><% event.title %></a></h2>
+            <% IF event.future_event_type.type == 'tentative' %>
+                <b>Dates yet to be decieded.</b>
+            <% ELSE %>
+                <% IF event.start_date == event.end_date %>
+                    <h5><% event.start_date %></h5>
+                <% ELSE %>
+                    <h5><% event.start_date %> - <% event.end_date %></h5>
+                <% END %>
+            <% END %>
+            <p><% event.summary %>
+            <p><a class="btn btn-primary" href="/events/future/<% event.uuid %>" role="button">View details</a></p>
+          </div>
+            <% IF session.user.admin == 1 %>
+            <p>
+                <b>Published:</b> <% event.published %><br/>
+                <% IF event.future_event_type.type == 'normal' %>
+                    <b>Registration Open:</b> <% event.reg_open %><br/>
+                    <b>Private Registration:</b> <% event.private_registration %><br/>
+                    <% IF event.private_registration == 1 %>
+                        <b><u><a href="/privatereg/<% event.private_uuid %>">Registration Link</a></u></b><br/>
+                    <% END %>
+                    <b>Participant Limit:</b> <% event.participant_limit %><br/>
+                    <b>Registered Participants:</b> <% event.registeredParticipants %><br/>
+                <% END %>
+            </p>
+            <% END %>
+        </div>
+    </div>
+    <% x = x+1 %>
+    <% IF x == 3 %>
+        <% x =0 %>
+        </div>
+    <% END %>
+<% END %>
+<% IF x != 0 && events.size != 0%>
     </div>
 <% END %>

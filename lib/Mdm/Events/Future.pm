@@ -41,11 +41,12 @@ get '/' => sub {
     my $events = [];
     my $filter = {
         published => 1,
-        start_date => { '>=' => \"CURRENT_DATE" }
+        start_date => { '>=' => \"CURRENT_DATE" },
+        archived => 0,
     };
     my $user = session('user');
     if (defined($user) && $user->{admin} == 1) {
-        $filter = {};
+        $filter = { archived => 0 };
     }
 
     my $rs = schema->resultset("FutureEvent")->search($filter, 
@@ -59,7 +60,22 @@ get '/' => sub {
     while (my $event = $rs->next) {
         push @$events, $event;
     }
-    template 'future/events', { nav_current => "future", events => $events };
+    my $archive = [];
+    if (defined($user) && $user->{admin} == 1) {
+        $filter = { archived => 1 };
+        my $rs = schema->resultset("FutureEvent")->search($filter, 
+            {
+                prefetch => [
+                    'user',
+                    'future_event_type',
+                ]
+            }
+        );
+        while (my $event = $rs->next) {
+            push @$archive, $event;
+        }
+    }
+    template 'future/events', { nav_current => "future", events => $events, archived_events => $archive };
 };
 get '/create' => sub {
     my $user = session('user');
@@ -276,6 +292,25 @@ get '/:uuid/registration/public' => sub {
     redirect "/events/future/".vars->{event}->uuid;
 };
 
+get '/:uuid/archive' => sub {
+    my $user = session('user');
+    if (!defined($user) || $user->{admin} == 0) {
+        flash error => "Access Denined";
+        return redirect '/';
+    }
+    vars->{event}->update({ archived => 1});
+    redirect "/events/future/".vars->{event}->uuid;
+};
+
+get '/:uuid/unarchive' => sub {
+    my $user = session('user');
+    if (!defined($user) || $user->{admin} == 0) {
+        flash error => "Access Denined";
+        return redirect '/';
+    }
+    vars->{event}->update({ archived => 0});
+    redirect "/events/future/".vars->{event}->uuid;
+};
 get '/:uuid/publish' => sub {
     my $user = session('user');
     if (!defined($user) || $user->{admin} == 0) {

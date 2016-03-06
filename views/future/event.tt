@@ -25,6 +25,11 @@
                             <li><a href="/events/future/<% event.uuid %>/registration/public">Make Registration Public</a></li>
                         <% END %>
                     <% END %>
+                    <% IF event.archived == 0 %>
+                        <li><a href="/events/future/<% event.uuid %>/archive">Archive</a></li>
+                    <% ELSE %>
+                        <li><a href="/events/future/<% event.uuid %>/unarchive">Unarchive</a></li>
+                    <% END %>
                     <li><a href="/events/future/<% event.uuid %>/delete">Delete</a></li>
 
                 </ul>
@@ -50,6 +55,7 @@
             <div class="panel-heading">Event Status</div>
             <div class="panel-body">
                 <b>Published:</b> <% event.published %><br/>
+                <b>Archived:</b> <% event.archived %><br/>
                 <% IF event.future_event_type.type == 'normal' %>
                     <b>Registration Open:</b> <% event.reg_open %><br/>
                     <b>Private Registration:</b> <% event.private_registration %><br/>
@@ -57,7 +63,7 @@
                         <b><u><a href="/privatereg/<% event.private_uuid %>">Registration Link</a></u></b><br/>
                     <% END %>
                     <b>Participant Limit:</b> <% event.participant_limit %><br/>
-                    <b>Registered Participants:</b> <% event.registeredParticipants %><br/>
+                    <b>Registered Participants:</b> <a href="/events/future/<% event.uuid %>/participants"><% event.registeredParticipants %></a><br/>
                 <% END %>
             </div>
         </div>
@@ -106,6 +112,14 @@
         <% END %>
         <h3>Details</h3>
         <% event.description %>
+        <% IF event.supportDrivers.count != 0 %>
+            <h3>Support Drivers</h3>
+            <ul>
+                <% FOREACH user IN event.supportDrivers %>
+                    <li><a href="/about/support/<% user.user_id %>"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;<% user.first_name %> <% user.last_name %></a></li>
+                <% END %>
+            </ul>
+        <% END %>
     </div>
     <div class="panel-footer">
         Author: <% event.user.first_name %> <% event.user.last_name %><br/>

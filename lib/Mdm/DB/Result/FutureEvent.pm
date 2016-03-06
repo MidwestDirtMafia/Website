@@ -36,6 +36,12 @@ __PACKAGE__->table("future_event");
   is_nullable: 0
   size: 36
 
+=head2 private_uuid
+
+  data_type: 'char'
+  is_nullable: 0
+  size: 36
+
 =head2 future_event_type_id
 
   data_type: 'integer'
@@ -92,6 +98,12 @@ __PACKAGE__->table("future_event");
   default_value: 0
   is_nullable: 0
 
+=head2 archived
+
+  data_type: 'tinyint'
+  default_value: 0
+  is_nullable: 0
+
 =head2 reg_open
 
   data_type: 'tinyint'
@@ -137,12 +149,6 @@ __PACKAGE__->table("future_event");
   datetime_undef_if_invalid: 1
   is_nullable: 1
 
-=head2 private_uuid
-
-  data_type: 'char'
-  is_nullable: 0
-  size: 36
-
 =cut
 
 __PACKAGE__->add_columns(
@@ -154,6 +160,8 @@ __PACKAGE__->add_columns(
     is_nullable => 0,
   },
   "uuid",
+  { data_type => "char", is_nullable => 0, size => 36 },
+  "private_uuid",
   { data_type => "char", is_nullable => 0, size => 36 },
   "future_event_type_id",
   {
@@ -183,6 +191,8 @@ __PACKAGE__->add_columns(
   { data_type => "char", is_nullable => 0, size => 64 },
   "published",
   { data_type => "tinyint", default_value => 0, is_nullable => 0 },
+  "archived",
+  { data_type => "tinyint", default_value => 0, is_nullable => 0 },
   "reg_open",
   { data_type => "tinyint", default_value => 0, is_nullable => 0 },
   "private_registration",
@@ -208,8 +218,6 @@ __PACKAGE__->add_columns(
     datetime_undef_if_invalid => 1,
     is_nullable => 1,
   },
-  "private_uuid",
-  { data_type => "char", is_nullable => 0, size => 36 },
 );
 
 =head1 PRIMARY KEY
@@ -225,6 +233,18 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("future_event_id");
 
 =head1 UNIQUE CONSTRAINTS
+
+=head2 C<private_uuid_UNIQUE>
+
+=over 4
+
+=item * L</private_uuid>
+
+=back
+
+=cut
+
+__PACKAGE__->add_unique_constraint("private_uuid_UNIQUE", ["private_uuid"]);
 
 =head2 C<title_UNIQUE>
 
@@ -313,8 +333,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07043 @ 2015-11-16 22:08:16
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:mat1fNPU/ShY/dxN3E/AVw
+# Created by DBIx::Class::Schema::Loader v0.07043 @ 2016-03-06 18:35:22
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:4gXYYmlR7EAotqYQM81zfw
 
 __PACKAGE__->many_to_many (
     users => "lk_user_future_events",
