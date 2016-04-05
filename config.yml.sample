@@ -19,15 +19,17 @@ session: "YAML"
 
 template: template_toolkit
 
-baseurl: http://scratch.home.tomjudge.com:3000
+baseurl: http://mdm:3000
+
+gpsbabel: /usr/local/bin/gpsbabel
 
 plugins:
     DBIC:
         default:
-            dsn: dbi:mysql:dbname=mdm;host=db-w
+            dsn: dbi:mysql:dbname=mdm;host=db
             schema_class: Mdm::DB
-            user: amishhammer
-            password: amishhammer
+            user: xxx
+            password: xxx
             options:
                 RaiseError: 1
                 PrintError: 1
