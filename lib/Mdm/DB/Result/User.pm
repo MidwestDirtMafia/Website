@@ -231,6 +231,21 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 lk_user_event_communications
+
+Type: has_many
+
+Related object: L<Mdm::DB::Result::LkUserEventCommunication>
+
+=cut
+
+__PACKAGE__->has_many(
+  "lk_user_event_communications",
+  "Mdm::DB::Result::LkUserEventCommunication",
+  { "foreign.user_id" => "self.user_id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 lk_user_future_events
 
 Type: has_many
@@ -307,8 +322,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07043 @ 2015-11-16 23:50:44
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:1Bq+CfmNGH/ZLAXzlhl/OQ
+# Created by DBIx::Class::Schema::Loader v0.07043 @ 2016-04-05 19:23:57
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:O2VwNrkKthagbeChBbwWjA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

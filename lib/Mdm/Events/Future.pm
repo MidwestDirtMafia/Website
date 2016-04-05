@@ -5,6 +5,7 @@ use warnings;
 use Dancer ':syntax';
 use Dancer::Plugin::DBIC qw(schema resultset rset);
 use Dancer::Plugin::FlashMessage;
+use Dancer::Plugin::Email;
 use UUID::Tiny ':std';
 use Data::Dumper;
 use Mdm::Utils;
@@ -199,7 +200,6 @@ get '/:uuid' => sub {
     for my $type (qw(kmz gpx usr)) {
         if (-e config->{public}."/gps_data/$uuid.$type") {
             push @gps_files, $type;
-            
         }
     }
     template 'future/event', { event => vars->{event}, gps_files => \@gps_files };
@@ -210,7 +210,7 @@ get '/:uuid/gps/:type' => sub {
     my $type = params->{type};
     if ($type !~ m/^(kmz|gpx|usr)$/) {
         flash error => "Invalid gps file type";
-        redirect "/events/future/$uuid";
+        return redirect "/events/future/$uuid";
     }
     my $ctype;
     if ($type eq "kmz") {
@@ -221,6 +221,70 @@ get '/:uuid/gps/:type' => sub {
         $ctype = "application/octet-stream";
     }
     send_file("gps_data/$uuid.$type", filename => "route.$type", content_type => $ctype);
+};
+
+get '/:uuid/email/:id' => sub {
+    my $user = session('user');
+    if (!defined($user) || $user->{admin} == 0) {
+        flash error => "Access Denined";
+        return template 'index';
+    }
+    my $id = param('id');
+    if (!defined($id) || $id !~ m/^\d+$/) {
+        flash error => "Invalid email ID";
+        return redirect "/events/future/".params->{uuid}."/email";
+    }
+
+    my $email = vars->{event}->find_related("event_communications", { event_communication_id => $id });
+    if (!defined($email)) {
+        flash error => "Invalid email ID";
+        return redirect "/events/future/".params->{uuid}."/email";
+    }
+
+    template 'future/email-sent', { event => vars->{event}, email => $email };
+};
+
+get '/:uuid/email' => sub {
+    my $user = session('user');
+    if (!defined($user) || $user->{admin} == 0) {
+        flash error => "Access Denined";
+        return template 'index';
+    }
+    template 'future/email', { event => vars->{event} };
+};
+
+post '/:uuid/email' => sub {
+    my $user = session('user');
+    if (!defined($user) || $user->{admin} == 0) {
+        flash error => "Access Denined";
+        return template 'index';
+    }
+    my $data = {
+        subject => param("subject"),
+        content => param("body"),
+    };
+    if (!defined($data->{subject})) {
+        flash error => "Subject not defined";
+        return template 'future/email', $data;
+    }
+    if (!defined($data->{content})) {
+        flash error => "Message not defined";
+        return template 'future/email', $data;
+    }
+    my $event = vars->{event};
+    my $com = $event->create_related("event_communications", $data);
+    my $users = $event->users;
+    while (my $user = $users->next) {
+        email {
+            from    => 'Midwest Dirt Mafia <webmaster@midwestdirtmafia.com>',
+            to      => $user->first_name." ".$user->last_name." <".$user->email.">",
+            subject => $data->{subject},
+            body    => $data->{content},
+            type    => 'html',
+        };
+        $com->create_related("lk_user_event_communications", { user_id => $user->id });
+    }
+    template 'future/email', { event => vars->{event} };
 };
 
 get '/:uuid/gps' => sub {

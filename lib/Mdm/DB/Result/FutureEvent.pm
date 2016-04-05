@@ -272,6 +272,21 @@ __PACKAGE__->add_unique_constraint("uuid_UNIQUE", ["uuid"]);
 
 =head1 RELATIONS
 
+=head2 event_communications
+
+Type: has_many
+
+Related object: L<Mdm::DB::Result::EventCommunication>
+
+=cut
+
+__PACKAGE__->has_many(
+  "event_communications",
+  "Mdm::DB::Result::EventCommunication",
+  { "foreign.future_event_id" => "self.future_event_id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 future_event_type
 
 Type: belongs_to
@@ -333,8 +348,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07043 @ 2016-03-06 18:35:22
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:4gXYYmlR7EAotqYQM81zfw
+# Created by DBIx::Class::Schema::Loader v0.07043 @ 2016-04-05 19:23:57
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:4Wvg04nherGwzt6xlpvueg
 
 __PACKAGE__->many_to_many (
     users => "lk_user_future_events",

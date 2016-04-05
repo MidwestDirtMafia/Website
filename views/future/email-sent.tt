@@ -1,0 +1,26 @@
+<div class="panel panel-default">
+    <% INCLUDE "future/event-header.tt" %>
+    <div class="panel-body">
+        <div style="text-align: center">
+            <img src="/image/<% event.banner_image %>"/>
+        </div>
+        &nbsp;<br/>
+        &nbsp;<br/>
+        <h3>Subject</h3>
+        <% email.subject %>
+        <h3>Message<h3>
+        <% email.content %>
+        <h3>Recipiants</h3>
+        <ul>
+            <% FOREACH r IN email.lk_user_event_communications %>
+                <li><% r.user.first_name %> <% r.user.last_name %> - <% r.sent %></li>
+            <% END %>
+        </ul>
+
+    </div>
+    <div class="panel-footer">
+        Author: <% event.user.first_name %> <% event.user.last_name %><br/>
+        Created: <% event.created %><br/>
+        Updated: <% event.updated %>
+    </div>
+</div>

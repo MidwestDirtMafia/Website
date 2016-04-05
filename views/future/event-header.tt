@@ -30,12 +30,13 @@
                         <li><a href="/events/future/<% event.uuid %>/unarchive">Unarchive</a></li>
                     <% END %>
                     <li><a href="/events/future/<% event.uuid %>/gps">Upload GPS File</a></li>
+                    <li><a href="/events/future/<% event.uuid %>/email">Email Participants</a></li>
                     <li><a href="/events/future/<% event.uuid %>/delete">Delete</a></li>
 
                 </ul>
             </div>
         <% END %>
-        <h1><% event.title %></h1>
+        <h1><a href="/events/future/<% event.uuid %>"><% event.title %></a></h1>
         <h5><% event.byline %></h5>
     </div>
 
