@@ -1,2 +1,4 @@
 tools/gen-schema.conf
 sessions
+public/image_data/*
+config.yml
