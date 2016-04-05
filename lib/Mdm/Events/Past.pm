@@ -176,6 +176,7 @@ post '/:uuid/edit' => sub {
         flash error => "Description not defined";
         return template 'past/create', { title => $title, start_date => $start_date, end_date => $end_date, published => $published, description => $desc, summary => $summary, byline => $byline };
     }
+    debug "Desc: $desc";
     $event->update({
         title       => $title,
         start_date  => $start_date,

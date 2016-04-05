@@ -16,34 +16,38 @@ $(document).ready(function() {
     });
     $('#summernote').summernote({
         height: 300,
-        onBlur: function() {
-            $("#eventDescription").val($("#summernote").code());
-        },
-        onImageUpload: function(files, editor, welEditable) {
-            sendFile(files[0],$("#summernote"),welEditable);
+        callbacks: {
+            onBlur: function() {
+                $("#eventDescription").val($("#summernote").summernote('code'));
+            },
+            onImageUpload: function(files, editor, welEditable) {
+                sendFile(files[0],$("#summernote"),welEditable);
+            }
         }
     });
-    $("#eventDescription").val($("#summernote").code());
+    $("#eventDescription").val($("#summernote").summernote('code'));
     $('#driverBioEditor').summernote({
         height: 300,
-        onBlur: function() {
-            $("#driverBio").val($("#driverBioEditor").code());
-        },
-        onImageUpload: function(files, editor, welEditable) {
-            sendFile(files[0],$("#driverBioEditor"),welEditable);
+        callbacks: {
+            onBlur: function() {
+                $("#driverBio").val($("#driverBioEditor").summernote('code'));
+            },
+            onImageUpload: function(files, editor, welEditable) {
+                sendFile(files[0],$("#driverBioEditor"),welEditable);
+            }
         }
     });
-    $("#driverBio").val($("#driverBioEditor").code());
+    $("#driverBio").val($("#driverBioEditor").summernote('code'));
     $('#vehicleDescriptionEditor').summernote({
         height: 300,
         onBlur: function() {
-            $("#vehicleDescription").val($("#vehicleDescriptionEditor").code());
+            $("#vehicleDescription").val($("#vehicleDescriptionEditor").summernote('code'));
         },
         onImageUpload: function(files, editor, welEditable) {
             sendFile(files[0],$("#vehicleDescriptionEditor"),welEditable);
         }
     });
-    $("#vehicleDescription").val($("#vehicleDescriptionEditor").code());
+    $("#vehicleDescription").val($("#vehicleDescriptionEditor").summernote('code'));
     $("#partnerLinkDiv").hide();
     $("#eventType").change(toggleEventType);
     toggleEventType();
