@@ -1,43 +1,5 @@
 <div class="panel panel-default">
-    <div class="panel-heading">
-        <% IF session.user.admin == 1 %>
-            <div class="dropdown" id="eventActions">
-                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                    Event Admin
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a href="/events/future/<% event.uuid %>/edit">Edit</a></li>
-                    <% IF event.published == 0 %>
-                        <li><a href="/events/future/<% event.uuid %>/publish">Publish</a></li>
-                    <% ELSE %>
-                        <li><a href="/events/future/<% event.uuid %>/unpublish">Unpublish</a></li>
-                    <% END %>
-                    <% IF event.future_event_type.type == 'normal' %>
-                        <% IF event.reg_open == 0 %>
-                            <li><a href="/events/future/<% event.uuid %>/registration/open">Open Registration</a></li>
-                        <% ELSE %>
-                            <li><a href="/events/future/<% event.uuid %>/registration/close">Close Registration</a></li>
-                        <% END %>
-                        <% IF event.private_registration == 0 %>
-                            <li><a href="/events/future/<% event.uuid %>/registration/private">Make Registration Private</a></li>
-                        <% ELSE %>
-                            <li><a href="/events/future/<% event.uuid %>/registration/public">Make Registration Public</a></li>
-                        <% END %>
-                    <% END %>
-                    <% IF event.archived == 0 %>
-                        <li><a href="/events/future/<% event.uuid %>/archive">Archive</a></li>
-                    <% ELSE %>
-                        <li><a href="/events/future/<% event.uuid %>/unarchive">Unarchive</a></li>
-                    <% END %>
-                    <li><a href="/events/future/<% event.uuid %>/delete">Delete</a></li>
-
-                </ul>
-            </div>
-        <% END %>
-        <h1><% event.title %></h1>
-        <h5><% event.byline %></h5>
-    </div>
+    <% INCLUDE "future/event-header.tt" %>
     <div class="panel-body">
         <div style="text-align: center">
             <img src="/image/<% event.banner_image %>"/>
@@ -119,6 +81,18 @@
                     <li><a href="/about/support/<% user.user_id %>"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;<% user.first_name %> <% user.last_name %></a></li>
                 <% END %>
             </ul>
+        <% END %>
+        <% IF session.user %>
+            <% IF event.isUserRegistered(session.user.id) == 1  || session.user.admin == 1 %>
+                <% IF gps_files.size != 0 %>
+                    <h3>GPS Files</h3>
+                    <ul>
+                        <% FOREACH file IN gps_files %>
+                            <li><a href="/events/future/<% event.uuid %>/gps/<% file %>">route.<% file %></a></li>
+                        <% END %>
+                    </ul>
+                <% END %>
+            <% END %>
         <% END %>
     </div>
     <div class="panel-footer">

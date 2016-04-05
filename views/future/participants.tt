@@ -1,8 +1,5 @@
 <div class="panel panel-default">
-    <div class="panel-heading">
-        <h1><% event.title %></h1>
-        <h5><% event.byline %></h5>
-    </div>
+    <% INCLUDE "future/event-header.tt" %>
     <div class="panel-body">
         <div style="text-align: center">
             <img src="/image/<% event.banner_image %>"/>

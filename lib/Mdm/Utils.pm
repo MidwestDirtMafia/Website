@@ -7,7 +7,7 @@ use Digest::SHA;
 use File::Copy;
 
 use Exporter qw/import/;
-our @EXPORT = qw/ handle_image_upload /;
+our @EXPORT = qw/ handle_image_upload fileSHA256 /;
 
 
 sub handle_image_upload {

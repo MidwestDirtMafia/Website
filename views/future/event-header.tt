@@ -1,0 +1,41 @@
+    <div class="panel-heading">
+        <% IF session.user.admin == 1 %>
+            <div class="dropdown" id="eventActions">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                    Event Admin
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="/events/future/<% event.uuid %>/edit">Edit</a></li>
+                    <% IF event.published == 0 %>
+                        <li><a href="/events/future/<% event.uuid %>/publish">Publish</a></li>
+                    <% ELSE %>
+                        <li><a href="/events/future/<% event.uuid %>/unpublish">Unpublish</a></li>
+                    <% END %>
+                    <% IF event.future_event_type.type == 'normal' %>
+                        <% IF event.reg_open == 0 %>
+                            <li><a href="/events/future/<% event.uuid %>/registration/open">Open Registration</a></li>
+                        <% ELSE %>
+                            <li><a href="/events/future/<% event.uuid %>/registration/close">Close Registration</a></li>
+                        <% END %>
+                        <% IF event.private_registration == 0 %>
+                            <li><a href="/events/future/<% event.uuid %>/registration/private">Make Registration Private</a></li>
+                        <% ELSE %>
+                            <li><a href="/events/future/<% event.uuid %>/registration/public">Make Registration Public</a></li>
+                        <% END %>
+                    <% END %>
+                    <% IF event.archived == 0 %>
+                        <li><a href="/events/future/<% event.uuid %>/archive">Archive</a></li>
+                    <% ELSE %>
+                        <li><a href="/events/future/<% event.uuid %>/unarchive">Unarchive</a></li>
+                    <% END %>
+                    <li><a href="/events/future/<% event.uuid %>/gps">Upload GPS File</a></li>
+                    <li><a href="/events/future/<% event.uuid %>/delete">Delete</a></li>
+
+                </ul>
+            </div>
+        <% END %>
+        <h1><% event.title %></h1>
+        <h5><% event.byline %></h5>
+    </div>
+

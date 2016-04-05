@@ -9,6 +9,10 @@ use UUID::Tiny ':std';
 use Data::Dumper;
 use Mdm::Utils;
 use Clone 'clone';
+use File::Copy;
+use File::Temp qw(tempdir);
+use IO::Uncompress::Unzip qw(unzip $UnzipError) ;
+use File::Path qw(remove_tree);
 
 prefix '/events/future';
 
@@ -190,7 +194,80 @@ post '/create' => sub {
 };
 
 get '/:uuid' => sub {
-    template 'future/event', { event => vars->{event} };
+    my $uuid = params->{uuid};
+    my @gps_files;
+    for my $type (qw(kmz gpx usr)) {
+        if (-e config->{public}."/gps_data/$uuid.$type") {
+            push @gps_files, $type;
+            
+        }
+    }
+    template 'future/event', { event => vars->{event}, gps_files => \@gps_files };
+};
+
+get '/:uuid/gps/:type' => sub {
+    my $uuid = params->{uuid};
+    my $type = params->{type};
+    if ($type !~ m/^(kmz|gpx|usr)$/) {
+        flash error => "Invalid gps file type";
+        redirect "/events/future/$uuid";
+    }
+    my $ctype;
+    if ($type eq "kmz") {
+        $ctype = "application/vnd.google-earth.kmz";
+    } elsif ($type eq "gpx") {
+        $ctype = "application/gpx+xml";
+    } elsif ($type eq "usr") {
+        $ctype = "application/octet-stream";
+    }
+    send_file("gps_data/$uuid.$type", filename => "route.$type", content_type => $ctype);
+};
+
+get '/:uuid/gps' => sub {
+    my $user = session('user');
+    if (!defined($user) || $user->{admin} == 0) {
+        flash error => "Access Denined";
+        return template 'index';
+    }
+    template 'future/gps', { event => vars->{event} };
+};
+
+post '/:uuid/gps' => sub {
+    my $user = session('user');
+    if (!defined($user) || $user->{admin} == 0) {
+        flash error => "Access Denined";
+        return template 'index';
+    }
+    my $upload = upload('gpsFile');
+    debug 'user uploaded [' . ($upload->filename // 'no filename') . '] with type [' . ($upload->type // 'no type') . '] stored in [' . $upload->tempname . ']';
+    my $uploaded_file = $upload->tempname;
+    my $uploaded_sha256 = fileSHA256($uploaded_file);
+    my $dir = tempdir();
+    debug "Processing gps file in $dir";
+    my $status = unzip $uploaded_file => "$dir/doc.kml", Name => 'doc.kml'
+        or die "unzip failed: $UnzipError\n";
+    my @gpx_cmd = (
+        config->{gpsbabel},
+        '-i', 'kml', '-o', 'gpx',
+        '-f', "$dir/doc.kml",
+        '-F', "$dir/doc.gpx",
+    );
+    my @usr_cmd = (
+        config->{gpsbabel},
+        '-i', 'kml', '-o', 'lowranceusr',
+        '-f', "$dir/doc.kml",
+        '-F', "$dir/doc.usr",
+    );
+    system(@gpx_cmd);
+    system(@usr_cmd); 
+
+    move ($uploaded_file, config->{public}."/gps_data/".params->{uuid}.".kmz");
+    move ("$dir/doc.gpx", config->{public}."/gps_data/".params->{uuid}.".gpx");
+    move ("$dir/doc.usr", config->{public}."/gps_data/".params->{uuid}.".usr");
+
+    remove_tree($dir);
+
+    redirect "/events/future/".params->{uuid};
 };
 
 get '/:uuid/participants' => sub {

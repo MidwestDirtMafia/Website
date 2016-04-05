@@ -26,6 +26,7 @@ hook 'after' => sub {
     return if (request->path_info =~ m/^\/logout/);
     return if (request->path_info =~ m/^\/image/);
     return if (request->path_info =~ m/^image_data/);
+    return if (request->path_info =~ m/^gps_data/);
     session last_path => (request->path_info);
 };
 

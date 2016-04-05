@@ -1,0 +1,37 @@
+<div class="panel panel-default">
+    <% INCLUDE "future/event-header.tt" %>
+    <div class="panel-body">
+        <div style="text-align: center">
+            <img src="/image/<% event.banner_image %>"/>
+        </div>
+        &nbsp;<br/>
+        &nbsp;<br/>
+        <h3>GPS File</h3>
+        <form id="createEventForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="logoFile" class="col-sm-2 control-label">Google Earth KMZ</label>
+                <div class="col-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                            <span class="btn btn-default btn-file">
+                                Browse&hellip;<input type="file" id="gpsFile" name="gpsFile" accept="application/vnd.google-earth.kmz" required>
+                            </span>
+                        </span>
+                        <input type="text" class="form-control" readonly>
+                    </div>
+                    <p class="help-block">Google Earth KMZ file containing the route</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button type="submit" class="btn btn-default">Upload</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="panel-footer">
+        Author: <% event.user.first_name %> <% event.user.last_name %><br/>
+        Created: <% event.created %><br/>
+        Updated: <% event.updated %>
+    </div>
+</div>
