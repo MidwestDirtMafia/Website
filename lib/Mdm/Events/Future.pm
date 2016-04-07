@@ -329,6 +329,7 @@ get '/:uuid/email' => sub {
 
 post '/:uuid/email' => sub {
     my $user = session('user');
+    my $uuid = param('uuid');
     if (!defined($user) || $user->{admin} == 0) {
         flash error => "Access Denined";
         return template 'index';
@@ -337,6 +338,8 @@ post '/:uuid/email' => sub {
         subject => param("subject"),
         content => param("body"),
     };
+    my $gps_files = param('gps_files');
+    my $release = param('release');
     if (!defined($data->{subject})) {
         flash error => "Subject not defined";
         return template 'future/email', $data;
@@ -349,13 +352,36 @@ post '/:uuid/email' => sub {
     my $com = $event->create_related("event_communications", $data);
     my $users = $event->users;
     while (my $user = $users->next) {
-        email {
+        my $email =  {
             from    => 'Midwest Dirt Mafia <webmaster@midwestdirtmafia.com>',
             to      => $user->first_name." ".$user->last_name." <".$user->email.">",
             subject => $data->{subject},
             body    => $data->{content},
             type    => 'html',
         };
+        if (defined($gps_files) && $gps_files eq 'on') {
+            $email->{attach} = [];
+            for my $type (qw(kmz gpx usr)) {
+                if (-e config->{public}."/gps_data/$uuid.$type") {
+                    push @{$email->{attach}}, {
+                        Path => config->{public}."/gps_data/$uuid.$type",
+                        Filename => "route.$type",
+                    };
+                }
+            }
+        }
+        if (defined($release) && $release eq 'on') {
+            if (!defined($email->{attach})) {
+                $email->{attach} = [];
+            }
+            if (-e config->{public}."/releases/$uuid.pdf") {
+                push @{$email->{attach}}, {
+                    Path => config->{public}."/releases/$uuid.pdf",
+                    Filename => "release.pdf",
+                };
+            }
+        }
+        email $email;
         $com->create_related("lk_user_event_communications", { user_id => $user->id });
     }
     template 'future/email', { event => vars->{event} };
