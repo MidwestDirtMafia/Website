@@ -31,6 +31,7 @@
                     <% END %>
                     <li><a href="/events/future/<% event.uuid %>/gps">Upload GPS File</a></li>
                     <li><a href="/events/future/<% event.uuid %>/email">Email Participants</a></li>
+                    <li><a href="/events/future/<% event.uuid %>/release/gen">Generate Liability Release</a></li>
                     <li><a href="/events/future/<% event.uuid %>/delete">Delete</a></li>
 
                 </ul>

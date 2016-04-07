@@ -1,0 +1,35 @@
+<div class="panel panel-default">
+    <% INCLUDE "future/event-header.tt" %>
+    <div class="panel-body">
+        <div style="text-align: center">
+            <img src="/image/<% event.banner_image %>"/>
+        </div>
+        &nbsp;<br/>
+        &nbsp;<br/>
+        <h3>Generate Liability Release</h3>
+        <form id="createEventForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="title" class="col-sm-2 control-label">Event Title</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" name="title" id="title" data-minlength="2" value="<% event.title %>" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-sm-2 control-label">Organizers</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" name="organizers" id="organizers" data-minlength="2" placeholder="Organizers" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-default">Generate</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="panel-footer">
+        Author: <% event.user.first_name %> <% event.user.last_name %><br/>
+        Created: <% event.created %><br/>
+        Updated: <% event.updated %>
+    </div>
+</div>

@@ -11,9 +11,13 @@ use Data::Dumper;
 use Mdm::Utils;
 use Clone 'clone';
 use File::Copy;
-use File::Temp qw(tempdir);
+use File::Temp qw(tempdir tempfile);
 use IO::Uncompress::Unzip qw(unzip $UnzipError) ;
 use File::Path qw(remove_tree);
+use OpenOffice::OODoc 2.101;
+use Try::Tiny;
+
+my $ENCODING = $OpenOffice::OODoc::XPath::LOCAL_CHARSET;
 
 prefix '/events/future';
 
@@ -202,7 +206,11 @@ get '/:uuid' => sub {
             push @gps_files, $type;
         }
     }
-    template 'future/event', { event => vars->{event}, gps_files => \@gps_files };
+    my $has_release = 0;
+    if (-e config->{public}."/releases/$uuid.pdf") {
+        $has_release = 1;
+    }
+    template 'future/event', { event => vars->{event}, gps_files => \@gps_files, has_release => $has_release };
 };
 
 get '/:uuid/gps/:type' => sub {
@@ -242,6 +250,72 @@ get '/:uuid/email/:id' => sub {
     }
 
     template 'future/email-sent', { event => vars->{event}, email => $email };
+};
+
+get '/:uuid/release' => sub {
+    my $uuid = params->{uuid};
+    my $type = params->{type};
+    send_file("releases/$uuid.pdf", filename => "release.pdf");
+};
+
+
+get '/:uuid/release/gen' => sub {
+    my $user = session('user');
+    if (!defined($user) || $user->{admin} == 0) {
+        flash error => "Access Denined";
+        return template 'index';
+    }
+    template 'future/release', { event => vars->{event} };
+};
+
+post '/:uuid/release/gen' => sub {
+    my $user = session('user');
+    if (!defined($user) || $user->{admin} == 0) {
+        flash error => "Access Denined";
+        return template 'index';
+    }
+    my $title = param("title");
+    my $organizers = param("organizers");
+    if (!defined($title)) {
+        flash error => "Title not defined";
+        return template 'future/release';
+    }
+    if (!defined($organizers)) {
+        flash error => "Organizers not defined";
+        return template 'future/release';
+    }
+    debug config->{appdir}.'/data/LiabilityDisclaimerTemplate.odt';
+    my $doc = odfDocument(file => config->{appdir}.'/data/LiabilityDisclaimerTemplate.odt', local_encoding => $ENCODING)
+            or die "File unavailable or non-ODF file\n";
+
+    my @list = $doc->selectElementsByContent("__TITLE__");
+    foreach my $e (@list) {
+        debug "__TITLE__";
+        $doc->substituteText($e, "__TITLE__", $title);
+    }
+    @list = $doc->selectElementsByContent("__ORGANIZERS__");
+    foreach my $e (@list) {
+        debug "__ORGANIZERS__";
+        $doc->substituteText($e, "__ORGANIZERS__", $organizers);
+    }
+    my ($fh, $filename) = tempfile();
+    close($fh);
+    unlink ($filename);
+    try {
+        $doc->save("$filename.odt");
+        my @cmd = (
+            config->{lowriter},
+            '--headless', '--convert-to', 'pdf',
+            "$filename.odt", '--outdir', '/tmp'
+        );
+        debug "Running convert command: ".join ' ', @cmd;
+        system (@cmd);
+        move("$filename.pdf", config->{public}."/releases/".params->{uuid}.".pdf");
+#        unlink("$filename.odt");
+    } catch {
+        error $_;
+    };
+    redirect "/events/future/".params->{uuid};
 };
 
 get '/:uuid/email' => sub {

@@ -94,6 +94,19 @@
                 <% END %>
             <% END %>
         <% END %>
+        <% IF session.user %>
+            <% IF event.isUserRegistered(session.user.id) == 1  || session.user.admin == 1 %>
+                <% IF has_release != 0 %>
+                    <h3>Liability Release</h3>
+                    <p>
+                        All participants must complete this Liability Disclaimer to be eligible to participate in the event.
+                    </p>
+                    <ul>
+                        <li><a href="/events/future/<% event.uuid %>/release">Download Release</a></li>
+                    </ul>
+                <% END %>
+            <% END %>
+        <% END %>
     </div>
     <div class="panel-footer">
         Author: <% event.user.first_name %> <% event.user.last_name %><br/>
