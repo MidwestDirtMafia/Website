@@ -303,6 +303,7 @@ post '/:uuid/release/gen' => sub {
     unlink ($filename);
     try {
         $doc->save("$filename.odt");
+        $ENV{HOME} = '/tmp';
         my @cmd = (
             config->{lowriter},
             '--headless', '--convert-to', 'pdf',
