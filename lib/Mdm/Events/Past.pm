@@ -38,7 +38,11 @@ get '/' => sub {
         $filter = {};
     }
 
-    my $rs = schema->resultset("PastEvent")->search($filter);
+    my $rs = schema->resultset("PastEvent")->search($filter,
+        {
+            order_by => { -DESC => 'start_date' }
+        }
+    );
     while (my $event = $rs->next) {
         push @$events, $event->{_column_data};
     }

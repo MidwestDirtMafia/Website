@@ -63,7 +63,8 @@ get '/' => sub {
             prefetch => [
                 'user',
                 'future_event_type',
-            ]
+            ],
+            order_by => { -DESC => 'start_date' }
         }
     );
     while (my $event = $rs->next) {
