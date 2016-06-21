@@ -22,7 +22,7 @@
                     <b>Registration Open:</b> <% event.reg_open %><br/>
                     <b>Private Registration:</b> <% event.private_registration %><br/>
                     <% IF event.private_registration == 1 %>
-                        <b><u><a href="/privatereg/<% event.private_uuid %>">Registration Link</a></u></b><br/>
+                        <b><u><a href="/events/future/<% event.private_uuid %>/register/private">Registration Link</a></u></b><br/>
                     <% END %>
                     <b>Participant Limit:</b> <% event.participant_limit %><br/>
                     <b>Registered Participants:</b> <a href="/events/future/<% event.uuid %>/participants"><% event.registeredParticipants %></a><br/>

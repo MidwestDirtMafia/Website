@@ -23,14 +23,17 @@ prefix '/events/future';
 
 hook 'before' => sub {
     return if (request->path_info !~ m{^/events/future});
-
+    my $key = 'uuid';
+    if (request->path_info =~ m{^/events/future/.*/register/private}) {
+        $key = 'private_uuid';
+    }
     my $uuid = param('uuid');
     if (defined($uuid)) {
         if (!is_uuid_string($uuid)) {
             flash error => "Invalid event ID.";
             return redirect '/events/future';
         }
-        my $event = schema->resultset("FutureEvent")->find({ uuid => $uuid },
+        my $event = schema->resultset("FutureEvent")->find({ $key => $uuid },
             {
                 prefetch => [
                     'user',
@@ -584,10 +587,31 @@ get '/:uuid/delete' => sub {
     redirect "/events/future";
 };
 
+get '/:uuid/register/private' => sub {
+    my $user = session('user');
+    if (!defined($user)) {
+        flash error => "Access Denined";
+        return redirect '/';
+    }
+    if (vars->{event}->reg_open == 0) {
+        flash error => "Registration is not currently open";
+        return redirect '/';
+    }
+    template 'future/register', { event => vars->{event} };
+};
+
 get '/:uuid/register' => sub {
     my $user = session('user');
     if (!defined($user)) {
         flash error => "Access Denined";
+        return redirect '/';
+    }
+    if (vars->{event}->private_registration == 1) {
+        flash error => "Registration is not currently open";
+        return redirect '/';
+    }
+    if (vars->{event}->reg_open == 0) {
+        flash error => "Registration is not currently open";
         return redirect '/';
     }
     template 'future/register', { event => vars->{event} };
@@ -599,6 +623,30 @@ post '/:uuid/register' => sub {
         flash error => "Access Denined";
         return redirect '/';
     }
+    if (vars->{event}->private_registration == 1) {
+        flash error => "Registration is not currently open";
+        return redirect '/';
+    }
+    if (vars->{event}->reg_open == 0) {
+        flash error => "Registration is not currently open";
+        return redirect '/';
+    }
+    return doRegister();
+};
+post '/:uuid/register/private' => sub {
+    my $user = session('user');
+    if (!defined($user)) {
+        flash error => "Access Denined";
+        return redirect '/';
+    }
+    if (vars->{event}->reg_open == 0) {
+        flash error => "Registration is not currently open";
+        return redirect '/';
+    }
+    return doRegister();
+};
+sub doRegister {
+    my $user = session('user');
     my $event = vars->{event};
     my $parts = param 'participants';
     my @participants;
