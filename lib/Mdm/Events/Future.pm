@@ -203,6 +203,13 @@ post '/create' => sub {
 };
 
 get '/:uuid' => sub {
+    if (vars->{event}->published == 0) {
+        my $user = session('user');
+        if (!defined($user) || $user->{admin} == 0) {
+            flash error => "Access Denied";
+            return redirect '/';
+        }
+    }
     my $uuid = params->{uuid};
     my @gps_files;
     for my $type (qw(kmz gpx usr)) {
