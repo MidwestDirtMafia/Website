@@ -51,6 +51,8 @@
     </div>
 <% END %>
 
+<% IF session.user.admin == 1 %>
+
 <h1>Archived Events</h1>
 
 <% x=0 %>
@@ -99,4 +101,5 @@
 <% END %>
 <% IF x != 0 && events.size != 0%>
     </div>
+<% END %>
 <% END %>
