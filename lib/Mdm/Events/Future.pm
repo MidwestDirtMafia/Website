@@ -589,23 +589,23 @@ get '/:uuid/delete' => sub {
 
 get '/:uuid/register/private' => sub {
     my $user = session('user');
-    if (!defined($user)) {
-        flash error => "Access Denined";
-        return redirect '/';
-    }
     if (vars->{event}->reg_open == 0) {
         flash error => "Registration is not currently open";
         return redirect '/';
+    }
+    if (!defined($user)) {
+        flash error => "Please login to register";
+        return redirect '/login';
+    }
+    if(vars->{event}->isUserRegistered($user->{id}) == 1) {
+        flash info => "You are already registered for this event";
+        return redirect "/events/future/".vars->{event}->uuid;
     }
     template 'future/register', { event => vars->{event} };
 };
 
 get '/:uuid/register' => sub {
     my $user = session('user');
-    if (!defined($user)) {
-        flash error => "Access Denined";
-        return redirect '/';
-    }
     if (vars->{event}->private_registration == 1) {
         flash error => "Registration is not currently open";
         return redirect '/';
@@ -613,16 +613,20 @@ get '/:uuid/register' => sub {
     if (vars->{event}->reg_open == 0) {
         flash error => "Registration is not currently open";
         return redirect '/';
+    }
+    if (!defined($user)) {
+        flash error => "Please login to register";
+        return redirect '/login';
+    }
+    if(vars->{event}->isUserRegistered($user->{id}) == 1) {
+        flash info => "You are already registered for this event";
+        return redirect "/events/future/".vars->{event}->uuid;
     }
     template 'future/register', { event => vars->{event} };
 };
 
 post '/:uuid/register' => sub {
     my $user = session('user');
-    if (!defined($user)) {
-        flash error => "Access Denined";
-        return redirect '/';
-    }
     if (vars->{event}->private_registration == 1) {
         flash error => "Registration is not currently open";
         return redirect '/';
@@ -631,17 +635,29 @@ post '/:uuid/register' => sub {
         flash error => "Registration is not currently open";
         return redirect '/';
     }
+    if (!defined($user)) {
+        flash error => "Please login to register";
+        return redirect '/login';
+    }
+    if(vars->{event}->isUserRegistered($user->{id}) == 1) {
+        flash info => "You are already registered for this event";
+        return redirect "/events/future/".vars->{event}->uuid;
+    }
     return doRegister();
 };
 post '/:uuid/register/private' => sub {
     my $user = session('user');
-    if (!defined($user)) {
-        flash error => "Access Denined";
-        return redirect '/';
-    }
     if (vars->{event}->reg_open == 0) {
         flash error => "Registration is not currently open";
         return redirect '/';
+    }
+    if (!defined($user)) {
+        flash error => "Please login to register";
+        return redirect '/login';
+    }
+    if(vars->{event}->isUserRegistered($user->{id}) == 1) {
+        flash info => "You are already registered for this event";
+        return redirect "/events/future/".vars->{event}->uuid;
     }
     return doRegister();
 };
